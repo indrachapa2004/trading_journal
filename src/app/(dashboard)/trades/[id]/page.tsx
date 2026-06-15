@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { format } from "date-fns";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import { TradeDeleteButton } from "@/components/trades/trade-delete-button";
+import { PsychologyTracker } from "@/components/trades/psychology-tracker";
 import { ScreenshotGallery } from "@/components/trades/screenshot-gallery";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
@@ -24,6 +25,11 @@ export default async function TradeDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+
+  if (id === "new" || id === "add") {
+    redirect("/add-trade");
+  }
+
   const trade = await getTradeById(id);
 
   if (!trade) notFound();
@@ -167,6 +173,13 @@ export default async function TradeDetailPage({
           </CardContent>
         </Card>
       </div>
+
+      <PsychologyTracker
+        key={trade.updated_at}
+        tradeId={id}
+        initialMistakes={trade.mistakes ?? []}
+        initialSelfRating={trade.self_rating}
+      />
 
       <Card>
         <CardHeader>

@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getActiveAccount } from "@/lib/data/accounts";
 import type { Trade, TradeScreenshot } from "@/types/database";
 
 export async function getCurrentUserEmail() {
@@ -10,12 +11,28 @@ export async function getCurrentUserEmail() {
   return user?.email ?? null;
 }
 
-export async function getTrades(): Promise<Trade[]> {
+export async function getStartingBalance(): Promise<number> {
+  const account = await getActiveAccount();
+  return Number(account?.starting_balance ?? 0);
+}
+
+async function tradesQuery() {
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("trades")
-    .select("*")
-    .order("entry_at", { ascending: false });
+  const account = await getActiveAccount();
+
+  let query = supabase.from("trades").select("*").order("entry_at", {
+    ascending: false,
+  });
+
+  if (account?.id) {
+    query = query.eq("account_id", account.id);
+  }
+
+  return query;
+}
+
+export async function getTrades(): Promise<Trade[]> {
+  const { data, error } = await tradesQuery();
 
   if (error) {
     throw new Error(error.message);
@@ -65,4 +82,12 @@ export async function getTradeScreenshots(
       };
     })
   );
+}
+
+export async function getTradesForDate(dateKey: string): Promise<Trade[]> {
+  const trades = await getTrades();
+  return trades.filter((trade) => {
+    const exitAt = trade.exit_at ?? trade.entry_at;
+    return exitAt.slice(0, 10) === dateKey;
+  });
 }

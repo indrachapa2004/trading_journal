@@ -1,14 +1,26 @@
-import { AppNav } from "@/components/layout/app-nav";
+import { getAccounts, getActiveAccount } from "@/lib/data/accounts";
+import { getCurrentUserEmail } from "@/lib/data/trades";
 
-export default function DashboardLayout({
+import { DashboardShell } from "@/components/layout/dashboard-shell";
+
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [userEmail, accounts, activeAccount] = await Promise.all([
+    getCurrentUserEmail(),
+    getAccounts(),
+    getActiveAccount(),
+  ]);
+
   return (
-    <div className="min-h-screen bg-muted/20">
-      <AppNav />
-      <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
-    </div>
+    <DashboardShell
+      userEmail={userEmail}
+      accounts={accounts}
+      activeAccount={activeAccount}
+    >
+      {children}
+    </DashboardShell>
   );
 }

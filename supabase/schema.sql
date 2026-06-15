@@ -5,6 +5,8 @@ create table if not exists public.profiles (
   id uuid primary key references auth.users (id) on delete cascade,
   display_name text,
   default_currency text not null default 'USD',
+  daily_loss_limit numeric(18, 2),
+  weekly_loss_limit numeric(18, 2),
   created_at timestamptz not null default now()
 );
 
@@ -30,6 +32,7 @@ create table if not exists public.accounts (
   broker text,
   starting_balance numeric(18, 2) not null default 0,
   currency text not null default 'USD',
+  is_default boolean not null default false,
   created_at timestamptz not null default now()
 );
 
@@ -39,6 +42,9 @@ create policy "Users manage own accounts"
   on public.accounts for all
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
+
+alter table public.profiles
+  add column if not exists active_account_id uuid references public.accounts (id) on delete set null;
 
 -- Enums
 do $$ begin
@@ -76,11 +82,16 @@ create table if not exists public.trades (
   post_trade_notes text,
   emotional_state public.emotional_state,
   tags text[] not null default '{}',
+  mistakes text[] not null default '{}',
+  self_rating smallint check (self_rating is null or (self_rating >= 1 and self_rating <= 10)),
+  rules_acknowledged uuid[] not null default '{}',
+  screenshot_url text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 
 create index if not exists trades_user_id_idx on public.trades (user_id);
+create index if not exists trades_account_id_idx on public.trades (account_id);
 create index if not exists trades_entry_at_idx on public.trades (entry_at desc);
 
 alter table public.trades enable row level security;
@@ -90,6 +101,11 @@ create policy "Users manage own trades"
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 
+do $$ begin
+  create type public.screenshot_phase as enum ('before', 'after');
+exception when duplicate_object then null;
+end $$;
+
 -- Screenshots metadata
 create table if not exists public.trade_screenshots (
   id uuid primary key default gen_random_uuid(),
@@ -97,6 +113,7 @@ create table if not exists public.trade_screenshots (
   user_id uuid not null references auth.users (id) on delete cascade,
   storage_path text not null,
   caption text,
+  phase public.screenshot_phase not null default 'before',
   created_at timestamptz not null default now()
 );
 
@@ -104,6 +121,48 @@ alter table public.trade_screenshots enable row level security;
 
 create policy "Users manage own screenshots"
   on public.trade_screenshots for all
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+-- User-defined pre-trade rules
+create table if not exists public.trading_rules (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users (id) on delete cascade,
+  label text not null,
+  sort_order int not null default 0,
+  is_active boolean not null default true,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists trading_rules_user_id_idx on public.trading_rules (user_id);
+
+alter table public.trading_rules enable row level security;
+
+create policy "Users manage own trading rules"
+  on public.trading_rules for all
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+-- Monthly goals per account
+create table if not exists public.monthly_goals (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users (id) on delete cascade,
+  account_id uuid not null references public.accounts (id) on delete cascade,
+  year int not null,
+  month int not null check (month between 1 and 12),
+  pnl_target numeric(18, 2),
+  win_rate_target numeric(5, 2)
+    check (win_rate_target is null or (win_rate_target >= 0 and win_rate_target <= 100)),
+  created_at timestamptz not null default now(),
+  unique (user_id, account_id, year, month)
+);
+
+create index if not exists monthly_goals_account_idx on public.monthly_goals (account_id, year, month);
+
+alter table public.monthly_goals enable row level security;
+
+create policy "Users manage own monthly goals"
+  on public.monthly_goals for all
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 
@@ -119,8 +178,15 @@ begin
   values (new.id)
   on conflict (id) do nothing;
 
-  insert into public.accounts (user_id, name)
-  values (new.id, 'Main Account');
+  insert into public.accounts (user_id, name, is_default)
+  values (new.id, 'Main Account', true);
+
+  insert into public.trading_rules (user_id, label, sort_order)
+  values
+    (new.id, 'Reviewed my trading plan', 1),
+    (new.id, 'Defined stop loss before entry', 2),
+    (new.id, 'Position size within risk limit', 3),
+    (new.id, 'Not trading out of revenge/FOMO', 4);
 
   return new;
 end;

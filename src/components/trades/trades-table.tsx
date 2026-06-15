@@ -1,6 +1,8 @@
-import Link from "next/link";
+"use client";
+
 import { format } from "date-fns";
 
+import { TradeRowActions } from "@/components/trades/trade-row-actions";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -10,99 +12,100 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { calculatePnl, formatCurrency } from "@/lib/trades";
+import {
+  calculatePnl,
+  formatRiskReward,
+  formatSignedCurrency,
+  getTradeRiskReward,
+} from "@/lib/trades";
+import { cn } from "@/lib/utils";
 import type { Trade } from "@/types/database";
 
 export function TradesTable({
   trades,
   compact = false,
+  onViewTrade,
 }: {
   trades: Trade[];
   compact?: boolean;
+  onViewTrade?: (id: string) => void;
 }) {
   return (
     <Table>
       <TableHeader>
-        <TableRow>
+        <TableRow className="hover:bg-transparent">
+          <TableHead>Date</TableHead>
           <TableHead>Symbol</TableHead>
-          <TableHead>Direction</TableHead>
-          <TableHead>Entry</TableHead>
-          {!compact ? <TableHead>Exit</TableHead> : null}
-          <TableHead>P&L</TableHead>
-          {!compact ? <TableHead>Tags</TableHead> : null}
+          <TableHead>Side</TableHead>
+          <TableHead className="text-right">R/R</TableHead>
+          <TableHead className="text-right">P&amp;L</TableHead>
+          {!compact ? <TableHead className="w-12 text-right">Action</TableHead> : null}
         </TableRow>
       </TableHeader>
       <TableBody>
-        {trades.map((trade) => {
+        {trades.map((trade, index) => {
           const pnl = calculatePnl(trade);
+          const riskReward = getTradeRiskReward(trade);
 
           return (
-            <TableRow key={trade.id}>
-              <TableCell>
-                <Link
-                  href={`/trades/${trade.id}`}
-                  className="font-medium hover:underline"
-                >
-                  {trade.symbol}
-                </Link>
+            <TableRow
+              key={trade.id}
+              className={cn(
+                "cursor-pointer border-zinc-800 transition-colors hover:bg-zinc-900/80",
+                index % 2 === 1 && "bg-zinc-900/30"
+              )}
+              onClick={() => onViewTrade?.(trade.id)}
+            >
+              <TableCell className="text-sm text-zinc-400">
+                {format(new Date(trade.entry_at), "MMM d, yyyy")}
               </TableCell>
               <TableCell>
-                <Badge variant={trade.direction === "long" ? "default" : "secondary"}>
-                  {trade.direction}
+                <span className="font-semibold text-zinc-100">
+                  {trade.symbol}
+                </span>
+              </TableCell>
+              <TableCell>
+                <Badge
+                  className={cn(
+                    "border-0 font-medium capitalize",
+                    trade.direction === "long"
+                      ? "bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/15"
+                      : "bg-rose-500/15 text-rose-400 hover:bg-rose-500/15"
+                  )}
+                >
+                  {trade.direction === "long" ? "Long" : "Short"}
                 </Badge>
               </TableCell>
-              <TableCell>
-                <div className="text-sm">
-                  {formatCurrency(trade.entry_price)}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {format(new Date(trade.entry_at), "MMM d, yyyy")}
-                </div>
+              <TableCell className="text-right font-mono text-sm text-zinc-300">
+                {formatRiskReward(riskReward)}
               </TableCell>
-              {!compact ? (
-                <TableCell>
-                  {trade.exit_price != null ? (
-                    <>
-                      <div className="text-sm">
-                        {formatCurrency(trade.exit_price)}
-                      </div>
-                      {trade.exit_at ? (
-                        <div className="text-xs text-muted-foreground">
-                          {format(new Date(trade.exit_at), "MMM d, yyyy")}
-                        </div>
-                      ) : null}
-                    </>
-                  ) : (
-                    <span className="text-muted-foreground">Open</span>
-                  )}
-                </TableCell>
-              ) : null}
-              <TableCell>
+              <TableCell className="text-right">
                 {pnl == null ? (
-                  <span className="text-muted-foreground">—</span>
+                  <span className="font-mono text-sm text-muted-foreground">
+                    Open
+                  </span>
                 ) : (
                   <span
-                    className={
-                      pnl >= 0 ? "text-emerald-600" : "text-destructive"
-                    }
+                    className={cn(
+                      "font-mono text-sm font-medium",
+                      pnl > 0 && "text-emerald-400",
+                      pnl < 0 && "text-rose-400",
+                      pnl === 0 && "text-zinc-400"
+                    )}
                   >
-                    {formatCurrency(pnl)}
+                    {formatSignedCurrency(pnl)}
                   </span>
                 )}
               </TableCell>
               {!compact ? (
-                <TableCell>
-                  <div className="flex flex-wrap gap-1">
-                    {trade.tags.length > 0 ? (
-                      trade.tags.map((tag) => (
-                        <Badge key={tag} variant="outline">
-                          {tag}
-                        </Badge>
-                      ))
-                    ) : (
-                      <span className="text-muted-foreground">—</span>
-                    )}
-                  </div>
+                <TableCell
+                  className="text-right"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <TradeRowActions
+                    tradeId={trade.id}
+                    onView={() => onViewTrade?.(trade.id)}
+                  />
                 </TableCell>
               ) : null}
             </TableRow>

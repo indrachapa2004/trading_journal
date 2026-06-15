@@ -1,7 +1,7 @@
-import Link from "next/link";
-
-import { TradesTable } from "@/components/trades/trades-table";
-import { buttonVariants } from "@/components/ui/button";
+import { CsvImport } from "@/components/trades/csv-import";
+import { ExportTradesButton } from "@/components/trades/export-trades-button";
+import { TradesTableWithSheet } from "@/components/trades/trades-table-with-sheet";
+import { LinkButton } from "@/components/ui/link-button";
 import {
   Card,
   CardContent,
@@ -9,40 +9,48 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { getActiveAccountCurrency } from "@/lib/data/accounts";
 import { getTrades } from "@/lib/data/trades";
-import { cn } from "@/lib/utils";
 
 export default async function TradesPage() {
-  const tradeList = await getTrades();
+  const [tradeList, currency] = await Promise.all([
+    getTrades(),
+    getActiveAccountCurrency(),
+  ]);
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Trades</h1>
-          <p className="text-sm text-muted-foreground">
-            All logged trades with P&amp;L and tags.
+          <h1 className="text-2xl font-semibold tracking-tight text-zinc-100">
+            Journal
+          </h1>
+          <p className="text-sm text-zinc-500">
+            All logged trades with side, risk/reward, and P&L
           </p>
         </div>
-        <Link href="/trades/new" className={cn(buttonVariants())}>
-          Add trade
-        </Link>
+        <div className="relative z-30 flex flex-wrap gap-2 isolate">
+          <ExportTradesButton />
+          <LinkButton href="/add-trade">Add trade</LinkButton>
+        </div>
       </div>
 
-      <Card>
+      <CsvImport />
+
+      <Card className="border-zinc-800/80 bg-zinc-900/50 ring-1 ring-white/5">
         <CardHeader>
-          <CardTitle>Trade log</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-zinc-100">Trade log</CardTitle>
+          <CardDescription className="text-zinc-500">
             {tradeList.length} trade{tradeList.length === 1 ? "" : "s"} total
           </CardDescription>
         </CardHeader>
         <CardContent>
           {tradeList.length === 0 ? (
-            <p className="py-8 text-center text-sm text-muted-foreground">
+            <p className="py-8 text-center text-sm text-zinc-500">
               No trades logged yet.
             </p>
           ) : (
-            <TradesTable trades={tradeList} />
+            <TradesTableWithSheet trades={tradeList} currency={currency} />
           )}
         </CardContent>
       </Card>
