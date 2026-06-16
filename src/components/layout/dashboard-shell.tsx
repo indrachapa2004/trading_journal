@@ -16,7 +16,7 @@ export function DashboardShell({
   activeAccount,
 }: DashboardShellProps) {
   return (
-    <div className="flex min-h-screen bg-zinc-950">
+    <div className="flex h-screen overflow-hidden bg-zinc-950">
       <AppSidebar
         email={userEmail}
         accounts={accounts}
@@ -24,15 +24,15 @@ export function DashboardShell({
         className="hidden lg:flex"
       />
 
-      <div className="flex min-w-0 flex-1 flex-col border-l border-zinc-800">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         <MobileSidebar
           email={userEmail}
           accounts={accounts}
           activeAccount={activeAccount}
         />
 
-        <main className="flex-1 overflow-auto bg-zinc-950">
-          <div className="mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">{children}</div>
+        <main className="min-h-0 flex-1 overflow-y-auto bg-zinc-950">
+          <div className="mx-auto max-w-7xl p-8 lg:p-10">{children}</div>
         </main>
       </div>
     </div>

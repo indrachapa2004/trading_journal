@@ -11,30 +11,25 @@ import {
   YAxis,
 } from "recharts";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import type { WinLossBucket } from "@/lib/analytics";
 import { formatCurrency } from "@/lib/trades";
+import { sectionLabel, terminalCard } from "@/lib/ui-classes";
 
 const COLORS = ["#10b981", "#e11d48"];
 
 export function WinLossChart({ data }: { data: WinLossBucket[] }) {
   return (
-    <Card className="border-zinc-800/80 bg-zinc-900/50 ring-1 ring-white/5">
-      <CardHeader>
-        <CardTitle className="text-zinc-100">Win / loss distribution</CardTitle>
-        <CardDescription className="text-zinc-500">
-          Total size of wins vs losses
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+    <Card className={terminalCard}>
+      <div className="p-6">
+        <div className="mb-6">
+          <p className={sectionLabel}>Win / loss distribution</p>
+          <p className="text-sm text-zinc-500">
+            Total size of wins vs losses
+          </p>
+        </div>
         {data.every((d) => d.count === 0) ? (
-          <p className="py-12 text-center text-sm text-zinc-500">
+          <p className="flex min-h-[260px] items-center justify-center text-center text-sm text-zinc-500">
             No closed trades yet.
           </p>
         ) : (
@@ -70,7 +65,7 @@ export function WinLossChart({ data }: { data: WinLossBucket[] }) {
             </ResponsiveContainer>
           </div>
         )}
-      </CardContent>
+      </div>
     </Card>
   );
 }

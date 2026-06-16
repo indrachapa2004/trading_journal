@@ -5,13 +5,7 @@ import { Upload } from "lucide-react";
 
 import { bulkImportTrades } from "@/app/(dashboard)/trades/actions";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -20,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { sectionLabel, terminalCard } from "@/lib/ui-classes";
 
 const SCHEMA_FIELDS = [
   { key: "symbol", label: "Symbol", required: true },
@@ -189,17 +184,17 @@ export function CsvImport() {
   }
 
   return (
-    <Card className="border-zinc-800/80 bg-zinc-900/50 ring-1 ring-white/5">
-      <CardHeader>
-        <div className="flex items-center gap-2">
-          <Upload className="size-4 text-emerald-400" />
-          <CardTitle className="text-zinc-100">Bulk CSV import</CardTitle>
+    <Card className={terminalCard}>
+      <div className="space-y-4 p-6">
+        <div>
+          <div className="mb-1 flex items-center gap-2">
+            <Upload className="size-4 text-emerald-400" />
+            <p className={sectionLabel}>Bulk CSV import</p>
+          </div>
+          <p className="text-sm text-zinc-500">
+            Upload broker exports and map columns to your journal schema
+          </p>
         </div>
-        <CardDescription className="text-zinc-500">
-          Upload broker exports and map columns to your journal schema
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
         <div className="space-y-2">
           <Label className="text-zinc-400">Broker CSV file</Label>
           <input
@@ -285,7 +280,7 @@ export function CsvImport() {
 
         {error ? <p className="text-sm text-rose-400">{error}</p> : null}
         {success ? <p className="text-sm text-emerald-400">{success}</p> : null}
-      </CardContent>
+      </div>
     </Card>
   );
 }

@@ -11,15 +11,10 @@ import {
   YAxis,
 } from "recharts";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import type { BreakdownItem } from "@/lib/analytics";
 import { formatCurrency } from "@/lib/trades";
+import { sectionLabel, terminalCard } from "@/lib/ui-classes";
 
 export function BreakdownChart({
   title,
@@ -31,14 +26,16 @@ export function BreakdownChart({
   data: BreakdownItem[];
 }) {
   return (
-    <Card className="border-zinc-800/80 bg-zinc-900/50 ring-1 ring-white/5">
-      <CardHeader>
-        <CardTitle className="text-zinc-100">{title}</CardTitle>
-        <CardDescription className="text-zinc-500">{description}</CardDescription>
-      </CardHeader>
-      <CardContent>
+    <Card className={terminalCard}>
+      <div className="flex h-full flex-col p-6">
+        <div className="mb-6">
+          <p className={sectionLabel}>{title}</p>
+          <p className="text-sm text-zinc-500">{description}</p>
+        </div>
         {data.length === 0 ? (
-          <p className="py-8 text-center text-sm text-zinc-500">No data yet.</p>
+          <p className="flex min-h-[240px] items-center justify-center text-center text-sm text-zinc-500">
+            No data yet.
+          </p>
         ) : (
           <div className="h-[240px] w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -86,7 +83,7 @@ export function BreakdownChart({
             </ResponsiveContainer>
           </div>
         )}
-      </CardContent>
+      </div>
     </Card>
   );
 }

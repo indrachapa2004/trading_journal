@@ -18,7 +18,7 @@ export function AppSidebar({
   return (
     <aside
       className={cn(
-        "flex w-64 shrink-0 flex-col border-r border-zinc-800 bg-zinc-950",
+        "flex h-screen w-64 shrink-0 flex-col border-r border-zinc-800 bg-zinc-950",
         className
       )}
     >

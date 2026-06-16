@@ -1,14 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Lock, Mail } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { signInAction, signUpAction } from "@/app/(auth)/actions";
 import { createClient } from "@/lib/supabase/client";
+import { getPasswordStrength, validatePassword } from "@/lib/password";
 import { cn } from "@/lib/utils";
 
 type AuthMode = "login" | "signup";
@@ -37,60 +38,53 @@ function GoogleIcon() {
 }
 
 export function AuthForm({ mode }: { mode: AuthMode }) {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     setError(null);
+    setSuccess(null);
+
+    if (mode === "signup") {
+      const passwordError = validatePassword(password);
+      if (passwordError) {
+        setError(passwordError);
+        return;
+      }
+    }
+
     setLoading(true);
 
-    const supabase = createClient();
-    const action =
-      mode === "login"
-        ? supabase.auth.signInWithPassword({ email, password })
-        : supabase.auth.signUp({
-            email,
-            password,
-            options: {
-              data: {
-                first_name: firstName.trim(),
-                last_name: lastName.trim(),
-              },
-            },
-          });
-
-    const { data, error: authError } = await action;
-    setLoading(false);
-
-    if (authError) {
-      setError(authError.message);
-      return;
+    try {
+      if (mode === "login") {
+        const result = await signInAction({ email, password });
+        if (result?.error) setError(result.error);
+      } else {
+        const result = await signUpAction({
+          email,
+          password,
+          firstName,
+          lastName,
+        });
+        if (result?.error) {
+          setError(result.error);
+        } else if (result?.needsEmailConfirmation) {
+          setSuccess(result.message ?? "Check your email to confirm your account.");
+        }
+      }
+    } catch {
+      // redirect() throws — expected on successful auth
+    } finally {
+      setLoading(false);
     }
-
-    if (mode === "signup" && data.user) {
-      const trimmedFirst = firstName.trim();
-      const trimmedLast = lastName.trim();
-      const displayName = [trimmedFirst, trimmedLast].filter(Boolean).join(" ");
-
-      await supabase
-        .from("profiles")
-        .update({
-          first_name: trimmedFirst || null,
-          last_name: trimmedLast || null,
-          display_name: displayName || null,
-        })
-        .eq("id", data.user.id);
-    }
-
-    router.refresh();
-    router.push(mode === "signup" ? "/onboarding" : "/dashboard");
   }
 
   async function handleGoogleSignIn() {
@@ -101,6 +95,9 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
       options: { redirectTo: `${window.location.origin}/auth/callback` },
     });
   }
+
+  const passwordStrength =
+    mode === "signup" ? getPasswordStrength(password) : [];
 
   return (
     <div
@@ -218,22 +215,55 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
             <Lock className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-zinc-500" />
             <Input
               id="password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               autoComplete={
                 mode === "login" ? "current-password" : "new-password"
               }
               placeholder="••••••••"
               required
-              minLength={6}
+              minLength={mode === "signup" ? 8 : 6}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className={cn(
-                "pl-9 bg-zinc-800/50 border-zinc-700/60 text-zinc-100 placeholder:text-zinc-600",
+                "pl-9 pr-10 bg-zinc-800/50 border-zinc-700/60 text-zinc-100 placeholder:text-zinc-600",
                 "focus-visible:ring-emerald-500/50 focus-visible:border-emerald-500/50"
               )}
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 transition-colors hover:text-zinc-300"
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? (
+                <EyeOff className="size-3.5" />
+              ) : (
+                <Eye className="size-3.5" />
+              )}
+            </button>
           </div>
+          {mode === "signup" && password.length > 0 && (
+            <ul className="mt-2 space-y-1">
+              {passwordStrength.map((rule) => (
+                <li
+                  key={rule.id}
+                  className={cn(
+                    "text-[11px]",
+                    rule.met ? "text-emerald-500" : "text-zinc-600"
+                  )}
+                >
+                  {rule.met ? "✓" : "○"} {rule.label}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
+
+        {success && (
+          <p className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-400">
+            {success}
+          </p>
+        )}
 
         {error && (
           <p className="rounded-lg border border-rose-500/20 bg-rose-500/10 px-3 py-2 text-sm text-rose-400">

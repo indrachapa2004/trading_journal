@@ -35,7 +35,7 @@ export function LandingHero() {
   };
 
   return (
-    <section className="relative overflow-hidden bg-zinc-950 px-4 pb-16 pt-20 sm:pb-24 sm:pt-28">
+    <section className="relative overflow-hidden px-4 pb-16 pt-20 sm:pb-24 sm:pt-28">
       <div
         className="pointer-events-none absolute inset-0 z-0"
         aria-hidden

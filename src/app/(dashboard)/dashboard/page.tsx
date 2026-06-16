@@ -5,17 +5,12 @@ import { EquityCurve } from "@/components/dashboard/equity-curve";
 import { MonthlyGoalsCard } from "@/components/dashboard/monthly-goals";
 import { PositionSizeCalculator } from "@/components/dashboard/position-size-calculator";
 import { SummaryRibbon } from "@/components/dashboard/summary-ribbon";
+import { PageHeader } from "@/components/layout/page-header";
 import { RiskLimitBanner } from "@/components/layout/risk-limit-banner";
 import { TradesTableWithSheet } from "@/components/trades/trades-table-with-sheet";
 import { LinkButton } from "@/components/ui/link-button";
 import { buttonVariants } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { upsertMonthlyGoal } from "@/app/(dashboard)/settings/actions";
 import {
   getActiveAccount,
@@ -26,6 +21,7 @@ import { getTrades } from "@/lib/data/trades";
 import { computeAdvancedStats } from "@/lib/analytics";
 import { computeTradeStats } from "@/lib/trades";
 import { cn } from "@/lib/utils";
+import { pageMain, sectionLabel, terminalCard } from "@/lib/ui-classes";
 
 export default async function DashboardPage() {
   const now = new Date();
@@ -51,80 +47,84 @@ export default async function DashboardPage() {
   const monthStats = computeTradeStats(monthTrades);
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-100">
-            Dashboard
-          </h1>
-          <p className="text-sm text-zinc-500">
-            {account?.name ?? "Portfolio"} · Terminal overview
-          </p>
-        </div>
-        <div className="relative z-30 flex flex-wrap gap-2 isolate">
+    <main className={pageMain}>
+        <PageHeader
+          title="Dashboard"
+          description={`${account?.name ?? "Portfolio"} · Terminal overview`}
+        >
           <LinkButton href="/reports/monthly" variant="outline">
             Monthly review
           </LinkButton>
           <LinkButton href="/add-trade">Log a trade</LinkButton>
-        </div>
-      </div>
+        </PageHeader>
 
-      <RiskLimitBanner />
+        <RiskLimitBanner />
 
-      <SummaryRibbon stats={stats} />
-
-      <AdvancedStatsRibbon stats={advanced} currency={currency} />
-
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          <EquityCurve />
-        </div>
-        <div className="space-y-6">
-          {account ? (
-            <MonthlyGoalsCard
-              goal={goal}
-              accountId={account.id}
-              currentPnl={monthStats.totalPnl}
-              currentWinRate={monthStats.winRate}
-              currency={currency}
-              onSave={upsertMonthlyGoal}
-            />
-          ) : null}
-          <PositionSizeCalculator
-            defaultBalance={account?.starting_balance ?? 10000}
-            currency={currency}
-          />
-        </div>
-      </div>
-
-      <Card className="border-zinc-800/80 bg-zinc-900/50 ring-1 ring-white/5">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div>
-            <CardTitle className="text-zinc-100">Recent trades</CardTitle>
-            <CardDescription className="text-zinc-500">
-              Latest logged trades
-            </CardDescription>
+        <div className="grid grid-cols-1 items-stretch gap-8 lg:grid-cols-12">
+          {/* Left: stats + chart */}
+          <div className="flex h-full flex-col space-y-6 lg:col-span-8">
+            <SummaryRibbon stats={stats} />
+            <AdvancedStatsRibbon stats={advanced} currency={currency} />
+            <div className="flex min-h-0 flex-1 flex-col">
+              <EquityCurve />
+            </div>
           </div>
-          <Link
-            href="/trades"
-            className={cn(buttonVariants({ variant: "outline", size: "sm" }), "border-zinc-700")}
-          >
-            View all
-          </Link>
-        </CardHeader>
-        <CardContent>
-          {recentTrades.length === 0 ? (
-            <p className="py-8 text-center text-sm text-zinc-500">
-              No trades yet.{" "}
-              <Link href="/add-trade" className="text-emerald-400 underline">
-                Add your first trade
+
+          {/* Right: calculators sidebar */}
+          <div className="flex h-full flex-col gap-6 lg:col-span-4">
+            {account ? (
+              <MonthlyGoalsCard
+                goal={goal}
+                accountId={account.id}
+                currentPnl={monthStats.totalPnl}
+                currentWinRate={monthStats.winRate}
+                currency={currency}
+                onSave={upsertMonthlyGoal}
+              />
+            ) : null}
+            <PositionSizeCalculator
+              defaultBalance={account?.starting_balance ?? 10000}
+              currency={currency}
+            />
+          </div>
+        </div>
+
+        <Card className={terminalCard}>
+          <div className="p-6">
+            <div className="mb-6 flex flex-row items-center justify-between">
+              <div>
+                <p className={sectionLabel}>
+                  Recent trades
+                </p>
+                <p className="text-sm text-zinc-500">Latest logged trades</p>
+              </div>
+              <Link
+                href="/trades"
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "sm" }),
+                  "border-zinc-700"
+                )}
+              >
+                View all
               </Link>
-            </p>
-          ) : (
-            <TradesTableWithSheet trades={recentTrades} compact currency={currency} />
-          )}
-        </CardContent>
-      </Card>
-    </div>
+            </div>
+
+            {recentTrades.length === 0 ? (
+              <p className="py-12 text-center text-sm text-zinc-500">
+                No trades yet.{" "}
+                <Link href="/add-trade" className="text-emerald-400 underline">
+                  Add your first trade
+                </Link>
+              </p>
+            ) : (
+              <TradesTableWithSheet
+                trades={recentTrades}
+                compact
+                currency={currency}
+              />
+            )}
+          </div>
+        </Card>
+    </main>
   );
 }

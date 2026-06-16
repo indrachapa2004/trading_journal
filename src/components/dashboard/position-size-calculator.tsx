@@ -3,17 +3,13 @@
 import { useMemo, useState } from "react";
 import { Calculator } from "lucide-react";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { calculatePositionSize } from "@/lib/risk";
 import { formatCurrency } from "@/lib/trades";
+import { sectionLabel, terminalCard } from "@/lib/ui-classes";
+import { cn } from "@/lib/utils";
 
 export function PositionSizeCalculator({
   defaultBalance = 10000,
@@ -37,87 +33,85 @@ export function PositionSizeCalculator({
   }, [balance, riskPercent, entry, stopLoss]);
 
   return (
-    <Card className="border-zinc-800/80 bg-zinc-900/50 ring-1 ring-white/5">
-      <CardHeader>
-        <div className="flex items-center gap-2">
-          <Calculator className="size-4 text-emerald-400" />
-          <CardTitle className="text-zinc-100">Position size</CardTitle>
+    <Card className={cn("flex flex-1 flex-col", terminalCard)}>
+      <div className="flex flex-1 flex-col p-6">
+        <div>
+          <div className="flex items-center gap-2">
+            <Calculator className="size-4 text-emerald-400" />
+            <h3 className="text-base font-medium text-zinc-100">Position size</h3>
+          </div>
+          <p className="mt-1 text-sm text-zinc-500">
+            Risk-based share/lot sizing calculator
+          </p>
         </div>
-        <CardDescription className="text-zinc-500">
-          Risk-based share/lot sizing calculator
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div className="space-y-1.5">
-            <Label className="text-zinc-400">Account balance</Label>
+
+        <div className="mt-6 shrink-0 space-y-3">
+          <div>
+            <Label className={cn(sectionLabel, "normal-case")}>Account balance</Label>
             <Input
               type="number"
               step="any"
               value={balance}
               onValueChange={setBalance}
-              className="border-zinc-700 bg-zinc-950 font-mono"
+              className="border-zinc-700 bg-zinc-950 font-mono tabular-nums"
             />
           </div>
-          <div className="space-y-1.5">
-            <Label className="text-zinc-400">Risk %</Label>
+          <div>
+            <Label className={cn(sectionLabel, "normal-case")}>Risk %</Label>
             <Input
               type="number"
               step="0.1"
               value={riskPercent}
               onValueChange={setRiskPercent}
-              className="border-zinc-700 bg-zinc-950 font-mono"
+              className="border-zinc-700 bg-zinc-950 font-mono tabular-nums"
             />
           </div>
-          <div className="space-y-1.5">
-            <Label className="text-zinc-400">Entry price</Label>
+          <div>
+            <Label className={cn(sectionLabel, "normal-case")}>Entry price</Label>
             <Input
               type="number"
               step="any"
               value={entry}
               onValueChange={setEntry}
-              className="border-zinc-700 bg-zinc-950 font-mono"
+              className="border-zinc-700 bg-zinc-950 font-mono tabular-nums"
             />
           </div>
-          <div className="space-y-1.5">
-            <Label className="text-zinc-400">Stop loss</Label>
+          <div>
+            <Label className={cn(sectionLabel, "normal-case")}>Stop loss</Label>
             <Input
               type="number"
               step="any"
               value={stopLoss}
               onValueChange={setStopLoss}
-              className="border-zinc-700 bg-zinc-950 font-mono"
+              className="border-zinc-700 bg-zinc-950 font-mono tabular-nums"
             />
           </div>
         </div>
 
-        <div className="grid gap-3 rounded-lg border border-zinc-800 bg-zinc-950/80 p-4 sm:grid-cols-3">
+        {/* Absorbs vertical stretch; keeps a minimum gap above results */}
+        <div className="min-h-8 flex-1 shrink" aria-hidden />
+
+        <div className="shrink-0 grid gap-3 rounded-lg border border-zinc-800 bg-zinc-950/80 p-4">
           <div>
-            <p className="text-xs uppercase tracking-wide text-zinc-500">
-              Position size
-            </p>
-            <p className="mt-1 font-mono text-xl font-semibold text-emerald-400">
+            <p className={sectionLabel}>Position size</p>
+            <p className="font-mono text-lg font-semibold tabular-nums text-emerald-400">
               {result.shares.toLocaleString()}
             </p>
           </div>
           <div>
-            <p className="text-xs uppercase tracking-wide text-zinc-500">
-              $ at risk
-            </p>
-            <p className="mt-1 font-mono text-xl font-semibold text-zinc-100">
+            <p className={sectionLabel}>$ at risk</p>
+            <p className="font-mono text-lg font-semibold tabular-nums text-zinc-100">
               {formatCurrency(result.totalAtRisk, currency)}
             </p>
           </div>
           <div>
-            <p className="text-xs uppercase tracking-wide text-zinc-500">
-              Risk budget
-            </p>
-            <p className="mt-1 font-mono text-xl font-semibold text-zinc-100">
+            <p className={sectionLabel}>Risk budget</p>
+            <p className="font-mono text-lg font-semibold tabular-nums text-zinc-100">
               {formatCurrency(result.riskAmount, currency)}
             </p>
           </div>
         </div>
-      </CardContent>
+      </div>
     </Card>
   );
 }

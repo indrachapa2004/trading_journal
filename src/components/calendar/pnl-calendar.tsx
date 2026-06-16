@@ -13,16 +13,11 @@ import {
 } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { DailyPnl } from "@/lib/analytics";
 import { formatSignedCurrency } from "@/lib/trades";
+import { sectionLabel, terminalCard } from "@/lib/ui-classes";
 import { cn } from "@/lib/utils";
 import type { Trade } from "@/types/database";
 
@@ -62,14 +57,12 @@ export function PnlCalendar({
     : [];
 
   return (
-    <Card className="border-zinc-800/80 bg-zinc-900/50 ring-1 ring-white/5">
-      <CardHeader>
+    <Card className={terminalCard}>
+      <div className="space-y-4 p-6">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-zinc-100">P&L calendar</CardTitle>
-            <CardDescription className="text-zinc-500">
-              Daily realized P&L heatmap
-            </CardDescription>
+            <p className={sectionLabel}>P&L calendar</p>
+            <p className="text-sm text-zinc-500">Daily realized P&L heatmap</p>
           </div>
           <div className="flex items-center gap-1">
             <Button
@@ -93,8 +86,6 @@ export function PnlCalendar({
             </Button>
           </div>
         </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
         <div className="grid grid-cols-7 gap-1 text-center text-xs text-zinc-500">
           {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
             <div key={d}>{d}</div>
@@ -173,7 +164,7 @@ export function PnlCalendar({
             )}
           </div>
         ) : null}
-      </CardContent>
+      </div>
     </Card>
   );
 }

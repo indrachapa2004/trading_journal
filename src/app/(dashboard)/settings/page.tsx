@@ -1,9 +1,11 @@
 import { SettingsForm } from "@/components/settings/settings-form";
+import { PageHeader } from "@/components/layout/page-header";
 import {
   getAccounts,
   getProfile,
   getTradingRules,
 } from "@/lib/data/accounts";
+import { pageMain } from "@/lib/ui-classes";
 
 export default async function SettingsPage() {
   const [profile, accounts, rules] = await Promise.all([
@@ -13,17 +15,15 @@ export default async function SettingsPage() {
   ]);
 
   return (
-    <section className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-zinc-100">
-          Settings
-        </h1>
-        <p className="mt-1 text-sm text-zinc-500">
-          Profile, risk limits, accounts, and trading rules
-        </p>
-      </div>
+    <main className={pageMain}>
+      <PageHeader
+        title="Settings"
+        description="Profile, risk limits, accounts, and trading rules"
+      />
 
-      <SettingsForm profile={profile} accounts={accounts} rules={rules} />
-    </section>
+      <div className="mx-auto max-w-4xl">
+        <SettingsForm profile={profile} accounts={accounts} rules={rules} />
+      </div>
+    </main>
   );
 }

@@ -3,9 +3,8 @@ import { AdvancedStatsRibbon } from "@/components/dashboard/advanced-stats-ribbo
 import { SummaryRibbon } from "@/components/dashboard/summary-ribbon";
 import { BreakdownChart } from "@/components/analytics/breakdown-chart";
 import { WinLossChart } from "@/components/analytics/win-loss-chart";
-import {
-  getActiveAccountCurrency,
-} from "@/lib/data/accounts";
+import { PageHeader } from "@/components/layout/page-header";
+import { getActiveAccountCurrency } from "@/lib/data/accounts";
 import { getTrades } from "@/lib/data/trades";
 import {
   computeAdvancedStats,
@@ -16,6 +15,7 @@ import {
   computeWinLossDistribution,
 } from "@/lib/analytics";
 import { computeTradeStats } from "@/lib/trades";
+import { pageMain } from "@/lib/ui-classes";
 
 export default async function AnalyticsPage() {
   const [trades, currency] = await Promise.all([
@@ -28,24 +28,21 @@ export default async function AnalyticsPage() {
   const winLoss = computeWinLossDistribution(trades);
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-zinc-100">
-          Analytics
-        </h1>
-        <p className="mt-1 text-sm text-zinc-500">
-          Performance breakdowns, distributions, and advanced metrics
-        </p>
+    <main className={pageMain}>
+      <PageHeader
+        title="Analytics"
+        description="Performance breakdowns, distributions, and advanced metrics"
+      />
+
+      <div className="space-y-6">
+        <SummaryRibbon stats={stats} />
+        <AdvancedStatsRibbon stats={advanced} currency={currency} />
+        <EquityCurve />
       </div>
-
-      <SummaryRibbon stats={stats} />
-      <AdvancedStatsRibbon stats={advanced} currency={currency} />
-
-      <EquityCurve />
 
       <WinLossChart data={winLoss} />
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 items-stretch gap-8 lg:grid-cols-2">
         <BreakdownChart
           title="By symbol"
           description="Top symbols by realized P&L"
@@ -67,6 +64,6 @@ export default async function AnalyticsPage() {
           data={computeTimeOfDayBreakdown(trades)}
         />
       </div>
-    </div>
+    </main>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useId } from "react";
+import { LineChart } from "lucide-react";
 import {
   Area,
   AreaChart,
@@ -11,14 +12,10 @@ import {
   YAxis,
 } from "recharts";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
+import { sectionLabel, terminalCard } from "@/lib/ui-classes";
 import { formatCurrency, type EquityPoint } from "@/lib/trades";
+import { cn } from "@/lib/utils";
 
 const EMERALD_500 = "#10b981";
 
@@ -56,20 +53,24 @@ export function EquityCurveChart({ data }: { data: EquityPoint[] }) {
   const gradientId = useId().replace(/:/g, "");
 
   return (
-    <Card className="border-zinc-800/80 bg-zinc-900/50 ring-1 ring-white/5">
-      <CardHeader>
-        <CardTitle className="text-zinc-100">Equity curve</CardTitle>
-        <CardDescription className="text-zinc-500">
-          Account balance from closed trades
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        {data.length === 0 ? (
-          <p className="py-12 text-center text-sm text-zinc-500">
-            Close a few trades to see your equity curve.
+    <Card className={cn("flex min-h-0 flex-1 flex-col", terminalCard)}>
+      <div className="flex min-h-0 flex-1 flex-col p-6">
+        <div className="shrink-0">
+          <p className={sectionLabel}>Equity curve</p>
+          <p className="text-sm text-zinc-500">
+            Account balance from closed trades
           </p>
+        </div>
+
+        {data.length === 0 ? (
+          <div className="flex min-h-[400px] flex-1 flex-col items-center justify-center gap-3 text-center">
+            <LineChart className="size-10 text-zinc-700" strokeWidth={1.5} />
+            <p className="max-w-xs text-sm text-zinc-500">
+              Close a few trades to see your equity curve.
+            </p>
+          </div>
         ) : (
-          <div className="relative isolate z-0 h-[300px] w-full overflow-hidden">
+          <div className="relative mt-6 min-h-[400px] flex-1 w-full overflow-hidden">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
                 data={data}
@@ -128,7 +129,7 @@ export function EquityCurveChart({ data }: { data: EquityPoint[] }) {
             </ResponsiveContainer>
           </div>
         )}
-      </CardContent>
+      </div>
     </Card>
   );
 }

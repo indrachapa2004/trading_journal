@@ -23,8 +23,8 @@ export function SidebarContent({
   className,
 }: SidebarContentProps) {
   return (
-    <div className={cn("flex h-full flex-col bg-zinc-950", className)}>
-      <div className="flex h-14 items-center gap-2 border-b border-zinc-800 px-5">
+    <div className={cn("flex h-full min-h-0 flex-col bg-zinc-950", className)}>
+      <div className="flex h-14 shrink-0 items-center gap-2 border-b border-zinc-800 px-5">
         <div className="flex size-8 items-center justify-center rounded-lg bg-zinc-800">
           <TrendingUp className="size-4 text-emerald-400" />
         </div>
@@ -37,15 +37,17 @@ export function SidebarContent({
         </Link>
       </div>
 
-      <div className="space-y-4 px-4 py-4">
+      <div className="shrink-0 space-y-4 px-4 py-4">
         <AccountSwitcher accounts={accounts} activeAccount={activeAccount} />
       </div>
 
-      <div className="flex-1 overflow-y-auto py-2">
+      <div className="min-h-0 flex-1 py-2">
         <SidebarNav onNavigate={onNavigate} />
       </div>
 
-      <SidebarUser email={email} />
+      <div className="shrink-0">
+        <SidebarUser email={email} />
+      </div>
     </div>
   );
 }

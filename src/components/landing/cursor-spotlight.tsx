@@ -35,7 +35,7 @@ export function CursorSpotlight() {
 
   return (
     <motion.div
-      className="pointer-events-none fixed inset-0 z-[1]"
+      className="pointer-events-none fixed inset-0 z-[40]"
       style={{ background }}
       aria-hidden
     />

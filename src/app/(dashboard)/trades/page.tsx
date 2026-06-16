@@ -1,16 +1,12 @@
 import { CsvImport } from "@/components/trades/csv-import";
 import { ExportTradesButton } from "@/components/trades/export-trades-button";
 import { TradesTableWithSheet } from "@/components/trades/trades-table-with-sheet";
+import { PageHeader } from "@/components/layout/page-header";
 import { LinkButton } from "@/components/ui/link-button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { getActiveAccountCurrency } from "@/lib/data/accounts";
 import { getTrades } from "@/lib/data/trades";
+import { pageMain, sectionLabel, terminalCard } from "@/lib/ui-classes";
 
 export default async function TradesPage() {
   const [tradeList, currency] = await Promise.all([
@@ -19,41 +15,35 @@ export default async function TradesPage() {
   ]);
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-100">
-            Journal
-          </h1>
-          <p className="text-sm text-zinc-500">
-            All logged trades with side, risk/reward, and P&L
-          </p>
-        </div>
-        <div className="relative z-30 flex flex-wrap gap-2 isolate">
-          <ExportTradesButton />
-          <LinkButton href="/add-trade">Add trade</LinkButton>
-        </div>
-      </div>
+    <main className={pageMain}>
+      <PageHeader
+        title="Journal"
+        description="All logged trades with side, risk/reward, and P&L"
+      >
+        <ExportTradesButton />
+        <LinkButton href="/add-trade">Add trade</LinkButton>
+      </PageHeader>
 
       <CsvImport />
 
-      <Card className="border-zinc-800/80 bg-zinc-900/50 ring-1 ring-white/5">
-        <CardHeader>
-          <CardTitle className="text-zinc-100">Trade log</CardTitle>
-          <CardDescription className="text-zinc-500">
-            {tradeList.length} trade{tradeList.length === 1 ? "" : "s"} total
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+      <Card className={terminalCard}>
+        <div className="p-6">
+          <div className="mb-6">
+            <p className={sectionLabel}>Trade log</p>
+            <p className="text-sm text-zinc-500">
+              {tradeList.length} trade{tradeList.length === 1 ? "" : "s"} total
+            </p>
+          </div>
+
           {tradeList.length === 0 ? (
-            <p className="py-8 text-center text-sm text-zinc-500">
+            <p className="py-12 text-center text-sm text-zinc-500">
               No trades logged yet.
             </p>
           ) : (
             <TradesTableWithSheet trades={tradeList} currency={currency} />
           )}
-        </CardContent>
+        </div>
       </Card>
-    </div>
+    </main>
   );
 }

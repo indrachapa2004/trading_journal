@@ -10,5 +10,9 @@ export async function EquityCurve() {
 
   const data = buildEquityCurve(trades, startingBalance);
 
-  return <EquityCurveChart data={data} />;
+  return (
+    <div className="flex min-h-0 flex-1 flex-col">
+      <EquityCurveChart data={data} />
+    </div>
+  );
 }

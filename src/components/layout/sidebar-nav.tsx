@@ -18,7 +18,7 @@ export function SidebarNav({ onNavigate, className }: SidebarNavProps) {
   const pathname = usePathname();
 
   return (
-    <nav className={cn("flex flex-col gap-1 px-3", className)}>
+    <nav className={cn("flex flex-col gap-1.5 px-3", className)}>
       {sidebarNavItems.map((item) => {
         const active = isNavItemActive(pathname, item);
 
@@ -28,7 +28,7 @@ export function SidebarNav({ onNavigate, className }: SidebarNavProps) {
             href={item.href}
             onClick={onNavigate}
             className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+              "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
               active
                 ? "bg-zinc-800 text-white"
                 : "text-zinc-400 hover:bg-zinc-800/60 hover:text-zinc-100"

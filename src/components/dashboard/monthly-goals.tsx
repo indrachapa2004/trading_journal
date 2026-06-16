@@ -3,17 +3,12 @@
 import { useState } from "react";
 import { Target } from "lucide-react";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { formatCurrency, formatPercent } from "@/lib/trades";
+import { sectionLabel, terminalCard } from "@/lib/ui-classes";
 import { cn } from "@/lib/utils";
 import type { MonthlyGoal } from "@/types/database";
 
@@ -61,17 +56,18 @@ export function MonthlyGoalsCard({
   }
 
   return (
-    <Card className="border-zinc-800/80 bg-zinc-900/50 ring-1 ring-white/5">
-      <CardHeader>
-        <div className="flex items-center gap-2">
-          <Target className="size-4 text-emerald-400" />
-          <CardTitle className="text-zinc-100">Monthly targets</CardTitle>
+    <Card className={cn("shrink-0", terminalCard)}>
+      <div className="space-y-4 p-6">
+        <div>
+          <div className="flex items-center gap-2">
+            <Target className="size-4 text-emerald-400" />
+            <h3 className="text-base font-medium text-zinc-100">Monthly targets</h3>
+          </div>
+          <p className="mt-1 text-sm text-zinc-500">
+            {now.toLocaleString("en-US", { month: "long", year: "numeric" })}
+          </p>
         </div>
-        <CardDescription className="text-zinc-500">
-          {now.toLocaleString("en-US", { month: "long", year: "numeric" })}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-5">
+
         {pnlTarget != null ? (
           <GoalBar
             label="P&L target"
@@ -91,12 +87,12 @@ export function MonthlyGoalsCard({
           />
         ) : null}
 
-        <form onSubmit={handleSubmit} className="grid gap-3 sm:grid-cols-2">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <input type="hidden" name="account_id" value={accountId} />
           <input type="hidden" name="year" value={now.getFullYear()} />
           <input type="hidden" name="month" value={now.getMonth() + 1} />
-          <div className="space-y-1.5">
-            <Label htmlFor="pnl_target" className="text-zinc-400">
+          <div>
+            <Label htmlFor="pnl_target" className={cn(sectionLabel, "normal-case")}>
               P&L target ({currency})
             </Label>
             <Input
@@ -106,11 +102,11 @@ export function MonthlyGoalsCard({
               step="any"
               defaultValue={goal?.pnl_target ?? ""}
               placeholder="5000"
-              className="border-zinc-700 bg-zinc-950 font-mono"
+              className="border-zinc-700 bg-zinc-950 font-mono tabular-nums"
             />
           </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="win_rate_target" className="text-zinc-400">
+          <div>
+            <Label htmlFor="win_rate_target" className={cn(sectionLabel, "normal-case")}>
               Win rate target (%)
             </Label>
             <Input
@@ -120,20 +116,15 @@ export function MonthlyGoalsCard({
               step="0.1"
               defaultValue={goal?.win_rate_target ?? ""}
               placeholder="55"
-              className="border-zinc-700 bg-zinc-950 font-mono"
+              className="border-zinc-700 bg-zinc-950 font-mono tabular-nums"
             />
           </div>
-          {error ? <p className="text-sm text-rose-400 sm:col-span-2">{error}</p> : null}
-          <Button
-            type="submit"
-            size="sm"
-            disabled={saving}
-            className="sm:col-span-2"
-          >
+          {error ? <p className="text-sm text-rose-400">{error}</p> : null}
+          <Button type="submit" size="sm" disabled={saving} className="w-full">
             {saving ? "Saving..." : "Save targets"}
           </Button>
         </form>
-      </CardContent>
+      </div>
     </Card>
   );
 }
@@ -154,8 +145,8 @@ function GoalBar({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between text-sm">
-        <span className="text-zinc-400">{label}</span>
-        <span className="font-mono text-zinc-300">
+        <span className={sectionLabel}>{label}</span>
+        <span className="font-mono tabular-nums text-zinc-300">
           {current} / {target}
         </span>
       </div>
