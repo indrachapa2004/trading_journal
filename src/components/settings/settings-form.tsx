@@ -20,6 +20,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { Account, Profile, TradingRule } from "@/types/database";
+import { cn } from "@/lib/utils";
+
+const CURRENCIES = ["USD", "EUR", "GBP", "JPY", "BTC"];
 
 export function SettingsForm({
   profile,
@@ -32,6 +35,7 @@ export function SettingsForm({
 }) {
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [currency, setCurrency] = useState(profile?.default_currency ?? "USD");
   const [isPending, startTransition] = useTransition();
 
   function handleProfile(e: React.FormEvent<HTMLFormElement>) {
@@ -85,26 +89,54 @@ export function SettingsForm({
         <CardHeader>
           <CardTitle className="text-zinc-100">Profile & risk limits</CardTitle>
           <CardDescription className="text-zinc-500">
-            Display name, currency, and daily/weekly loss limits
+            Name, base currency, and daily/weekly loss limits
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleProfile} className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label className="text-zinc-400">Display name</Label>
+              <Label className="text-zinc-400">First name</Label>
               <Input
-                name="display_name"
-                defaultValue={profile?.display_name ?? ""}
+                name="first_name"
+                defaultValue={profile?.first_name ?? ""}
+                placeholder="Alex"
+                autoComplete="given-name"
                 className="border-zinc-700 bg-zinc-950"
               />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-zinc-400">Default currency</Label>
+              <Label className="text-zinc-400">Last name</Label>
               <Input
-                name="default_currency"
-                defaultValue={profile?.default_currency ?? "USD"}
-                className="border-zinc-700 bg-zinc-950 font-mono"
+                name="last_name"
+                defaultValue={profile?.last_name ?? ""}
+                placeholder="Rivera"
+                autoComplete="family-name"
+                className="border-zinc-700 bg-zinc-950"
               />
+            </div>
+            <div className="space-y-1.5 sm:col-span-2">
+              <Label className="text-zinc-400">Base currency</Label>
+              <input type="hidden" name="default_currency" value={currency} />
+              <div className="flex flex-wrap gap-2">
+                {CURRENCIES.map((c) => {
+                  const selected = currency === c;
+                  return (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => setCurrency(c)}
+                      className={cn(
+                        "rounded-lg border px-4 py-2 text-sm font-mono font-medium transition-colors",
+                        selected
+                          ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30"
+                          : "border-zinc-700 bg-zinc-950 text-zinc-400 hover:border-zinc-600 hover:text-zinc-200"
+                      )}
+                    >
+                      {c}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
             <div className="space-y-1.5">
               <Label className="text-zinc-400">Daily loss limit</Label>

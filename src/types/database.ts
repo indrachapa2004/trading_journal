@@ -56,9 +56,16 @@ export type TradeScreenshot = {
   created_at: string;
 };
 
+export type TradingExperience = "beginner" | "intermediate" | "pro";
+
 export type Profile = {
   id: string;
   display_name: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  trading_experience: TradingExperience | null;
+  onboarding_completed: boolean;
+  primary_asset_class: string | null;
   default_currency: string;
   daily_loss_limit: number | null;
   weekly_loss_limit: number | null;
@@ -74,6 +81,7 @@ export type Account = {
   starting_balance: number;
   currency: string;
   is_default: boolean;
+  risk_per_trade_percent: number;
   created_at: string;
 };
 
@@ -105,6 +113,11 @@ export type Database = {
         Insert: {
           id: string;
           display_name?: string | null;
+          first_name?: string | null;
+          last_name?: string | null;
+          trading_experience?: TradingExperience | null;
+          onboarding_completed?: boolean;
+          primary_asset_class?: string | null;
           default_currency?: string;
           daily_loss_limit?: number | null;
           weekly_loss_limit?: number | null;
@@ -124,6 +137,7 @@ export type Database = {
           starting_balance?: number;
           currency?: string;
           is_default?: boolean;
+          risk_per_trade_percent?: number;
           created_at?: string;
         };
         Update: Partial<Account>;

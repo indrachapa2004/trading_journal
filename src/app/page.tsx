@@ -1,56 +1,22 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import {
-  BarChart3,
-  BookOpen,
-  LineChart,
-  NotebookPen,
-  Tags,
-} from "lucide-react";
 
+import { CursorSpotlight } from "@/components/landing/cursor-spotlight";
+import { DemoPreview } from "@/components/landing/demo-preview";
+import { FeatureBento } from "@/components/landing/feature-bento";
+import { LandingCta } from "@/components/landing/landing-cta";
+import { LandingFooter } from "@/components/landing/landing-footer";
+import { LandingHero } from "@/components/landing/landing-hero";
 import { MarketingHeader } from "@/components/layout/marketing-header";
 import { buttonVariants } from "@/components/ui/button";
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 
-const features = [
-  {
-    icon: BookOpen,
-    title: "Trade logging",
-    description:
-      "Record entries, exits, fees, tags, and notes for every position.",
-  },
-  {
-    icon: BarChart3,
-    title: "Performance analytics",
-    description:
-      "Track P&L, win rate, profit factor, and your equity curve over time.",
-  },
-  {
-    icon: Tags,
-    title: "Strategy tracking",
-    description:
-      "Tag trades by setup, market condition, and emotional state.",
-  },
-  {
-    icon: NotebookPen,
-    title: "Trade journal",
-    description:
-      "Capture pre-trade and post-trade notes to review what worked.",
-  },
-  {
-    icon: LineChart,
-    title: "Visual insights",
-    description:
-      "See cumulative performance and spot patterns in your results.",
-  },
-];
+export const metadata = {
+  title: "Trading Journal — Fix Your Trading Edge",
+  description:
+    "Most journals are spreadsheets. This is a performance lab. Track your data, tag your emotions, and stop repeating the same mistakes.",
+};
 
 export default async function HomePage() {
   const supabase = await createClient();
@@ -63,83 +29,48 @@ export default async function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-muted/20">
+    <div className="relative min-h-screen bg-zinc-950 text-zinc-100">
+      <CursorSpotlight />
       <MarketingHeader />
 
-      <main>
-        <section className="mx-auto max-w-6xl px-4 py-20 sm:py-28">
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="mb-3 text-sm font-medium text-muted-foreground">
-              Built for serious traders
-            </p>
-            <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
-              Your trades. Your data. Your edge.
-            </h1>
-            <p className="mt-4 text-lg text-muted-foreground">
-              A focused trading journal to log every trade, measure performance,
-              and improve with clarity — not clutter.
-            </p>
-            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Link href="/signup" className={cn(buttonVariants({ size: "lg" }))}>
-                Start for free
-              </Link>
-              <Link
-                href="/login"
-                className={cn(buttonVariants({ variant: "outline", size: "lg" }))}
-              >
-                Sign in
-              </Link>
-            </div>
-          </div>
-        </section>
+      <main className="relative z-10">
+        <LandingHero />
+        <DemoPreview />
 
-        <section className="border-t bg-background">
-          <div className="mx-auto max-w-6xl px-4 py-16">
-            <div className="mb-10 text-center">
-              <h2 className="text-2xl font-semibold tracking-tight">
-                Everything you need to journal smarter
-              </h2>
-              <p className="mt-2 text-muted-foreground">
-                Core tools to log trades and review your performance.
-              </p>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {features.map((feature) => (
-                <Card key={feature.title}>
-                  <CardHeader>
-                    <div className="mb-2 flex size-9 items-center justify-center rounded-lg bg-muted">
-                      <feature.icon className="size-4" />
-                    </div>
-                    <CardTitle>{feature.title}</CardTitle>
-                    <CardDescription>{feature.description}</CardDescription>
-                  </CardHeader>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
+        <div className="py-20">
+          <FeatureBento />
+        </div>
 
-        <section className="border-t">
-          <div className="mx-auto max-w-6xl px-4 py-16 text-center">
-            <h2 className="text-2xl font-semibold tracking-tight">
-              Ready to review your trading?
+        {/* Pricing teaser */}
+        <section id="pricing" className="scroll-mt-20 border-t border-zinc-800/80 py-16">
+          <div className="mx-auto max-w-3xl px-4 text-center">
+            <h2 className="text-2xl font-semibold text-zinc-100">
+              Simple, honest pricing
             </h2>
-            <p className="mt-2 text-muted-foreground">
-              Create an account and log your first trade in minutes.
+            <p className="mt-2 text-zinc-400">
+              Start free. Upgrade when you need multi-account and advanced
+              exports.
             </p>
-            <Link
-              href="/signup"
-              className={cn(buttonVariants({ size: "lg" }), "mt-6 inline-flex")}
-            >
-              Create your journal
-            </Link>
+            <div className="mt-8 inline-flex flex-col items-center rounded-2xl border border-zinc-800 bg-zinc-900/50 px-10 py-8 ring-1 ring-white/5">
+              <p className="font-mono text-5xl font-bold text-zinc-50">$0</p>
+              <p className="mt-1 text-sm text-zinc-500">per month to start</p>
+              <Link
+                href="/signup"
+                className={cn(
+                  buttonVariants({ size: "lg" }),
+                  "mt-6 bg-zinc-100 text-zinc-900 hover:bg-white"
+                )}
+              >
+                Create free account
+              </Link>
+            </div>
           </div>
         </section>
+
+        <LandingCta />
       </main>
 
-      <footer className="border-t py-8 text-center text-sm text-muted-foreground">
-        Trading Journal — track, analyze, improve.
-      </footer>
+      <LandingFooter />
     </div>
   );
 }

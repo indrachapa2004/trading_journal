@@ -4,6 +4,8 @@
 create table if not exists public.profiles (
   id uuid primary key references auth.users (id) on delete cascade,
   display_name text,
+  first_name text,
+  last_name text,
   default_currency text not null default 'USD',
   daily_loss_limit numeric(18, 2),
   weekly_loss_limit numeric(18, 2),
@@ -173,9 +175,13 @@ language plpgsql
 security definer
 set search_path = public
 as $$
+declare
+  meta_first text := nullif(trim(new.raw_user_meta_data->>'first_name'), '');
+  meta_last text := nullif(trim(new.raw_user_meta_data->>'last_name'), '');
+  meta_display text := nullif(trim(concat_ws(' ', meta_first, meta_last)), '');
 begin
-  insert into public.profiles (id)
-  values (new.id)
+  insert into public.profiles (id, first_name, last_name, display_name)
+  values (new.id, meta_first, meta_last, meta_display)
   on conflict (id) do nothing;
 
   insert into public.accounts (user_id, name, is_default)

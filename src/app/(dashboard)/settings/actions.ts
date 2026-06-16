@@ -87,7 +87,8 @@ export async function createAccount(formData: FormData) {
 }
 
 const profileSchema = z.object({
-  display_name: z.string().max(50).optional(),
+  first_name: z.string().max(50).optional(),
+  last_name: z.string().max(50).optional(),
   default_currency: z.string().min(3).max(3),
   daily_loss_limit: z.coerce.number().min(0).optional().or(z.literal("")),
   weekly_loss_limit: z.coerce.number().min(0).optional().or(z.literal("")),
@@ -100,12 +101,18 @@ export async function updateProfile(formData: FormData) {
   }
 
   const { supabase, userId } = await getUserId();
+  const firstName = parsed.data.first_name?.trim() || null;
+  const lastName = parsed.data.last_name?.trim() || null;
+  const displayName = [firstName, lastName].filter(Boolean).join(" ") || null;
+  const currency = parsed.data.default_currency.toUpperCase();
 
   const { error } = await supabase
     .from("profiles")
     .update({
-      display_name: parsed.data.display_name?.trim() || null,
-      default_currency: parsed.data.default_currency.toUpperCase(),
+      first_name: firstName,
+      last_name: lastName,
+      display_name: displayName,
+      default_currency: currency,
       daily_loss_limit:
         parsed.data.daily_loss_limit === ""
           ? null
@@ -118,6 +125,12 @@ export async function updateProfile(formData: FormData) {
     .eq("id", userId);
 
   if (error) return { error: error.message };
+
+  await supabase
+    .from("accounts")
+    .update({ currency })
+    .eq("user_id", userId)
+    .eq("is_default", true);
 
   revalidatePath("/settings");
   revalidatePath("/dashboard");
