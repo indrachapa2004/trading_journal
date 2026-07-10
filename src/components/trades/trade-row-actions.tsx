@@ -10,7 +10,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLinkItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -53,17 +52,19 @@ export function TradeRowActions({
         <MoreHorizontal className="size-4" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-40">
-        <DropdownMenuItem closeOnClick onClick={onView}>
+        <DropdownMenuItem onClick={onView}>
           <Eye className="size-4" />
           View details
         </DropdownMenuItem>
-        <DropdownMenuLinkItem
-          render={<Link href={`/trades/${tradeId}/edit`} />}
-          closeOnClick
-        >
-          <Pencil className="size-4" />
-          Edit
-        </DropdownMenuLinkItem>
+        
+        {/* Fixed: Replaced DropdownMenuLinkItem with a native standard link setup */}
+        <DropdownMenuItem asChild>
+          <Link href={`/trades/${tradeId}/edit`} className="flex w-full items-center gap-2">
+            <Pencil className="size-4" />
+            Edit
+          </Link>
+        </DropdownMenuItem>
+        
         <DropdownMenuSeparator />
         <DropdownMenuItem variant="destructive" onClick={handleDelete}>
           <Trash2 className="size-4" />
