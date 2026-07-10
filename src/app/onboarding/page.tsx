@@ -6,7 +6,7 @@ import { OnboardingFlow } from "@/components/onboarding/onboarding-flow";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Set up your profile — Trading Journal",
+  title: "Set up your profile — Tradventure",
 };
 
 export default async function OnboardingPage() {

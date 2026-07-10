@@ -380,7 +380,7 @@ export function OnboardingFlow() {
             TJ
           </span>
           <span className="text-sm font-semibold tracking-tight text-zinc-300">
-            Trading Journal
+            Tradventure
           </span>
         </div>
 

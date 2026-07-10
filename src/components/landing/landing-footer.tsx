@@ -20,7 +20,7 @@ export function LandingFooter() {
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-2">
             <Link href="/" className="text-lg font-semibold text-zinc-100">
-              Trading Journal
+              Tradventure
             </Link>
             <p className="mt-3 max-w-sm text-sm text-zinc-500">
               The data-driven journal for traders who care about psychology,
@@ -82,7 +82,7 @@ export function LandingFooter() {
         </div>
 
         <div className="mt-10 border-t border-zinc-800 pt-6 text-center text-sm text-zinc-600">
-          © {new Date().getFullYear()} Trading Journal. All rights reserved.
+          © {new Date().getFullYear()} Tradventure. All rights reserved.
         </div>
       </div>
     </footer>

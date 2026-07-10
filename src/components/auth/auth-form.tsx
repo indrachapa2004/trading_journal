@@ -113,7 +113,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
             TJ
           </span>
           <span className="text-sm font-semibold tracking-tight text-zinc-300">
-            Trading Journal
+            Tradventure
           </span>
         </div>
         <h1 className="text-xl font-semibold tracking-tight text-zinc-50">

@@ -75,7 +75,7 @@ export default async function MonthlyReportPage() {
         </section>
 
         <footer className="border-t border-zinc-800 pt-6 text-xs text-zinc-600 print:border-zinc-300">
-          {monthTrades.length} trades this month · Trading Journal
+          {monthTrades.length} trades this month · Tradventure
         </footer>
       </article>
     </>

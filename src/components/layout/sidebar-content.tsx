@@ -1,7 +1,7 @@
-import Link from "next/link";
 import { TrendingUp } from "lucide-react";
 
 import { AccountSwitcher } from "@/components/layout/account-switcher";
+import { Logo } from "@/components/ui/Logo";
 import { SidebarNav } from "@/components/layout/sidebar-nav";
 import { SidebarUser } from "@/components/layout/sidebar-user";
 import { cn } from "@/lib/utils";
@@ -24,17 +24,8 @@ export function SidebarContent({
 }: SidebarContentProps) {
   return (
     <div className={cn("flex h-full min-h-0 flex-col bg-zinc-950", className)}>
-      <div className="flex h-14 shrink-0 items-center gap-2 border-b border-zinc-800 px-5">
-        <div className="flex size-8 items-center justify-center rounded-lg bg-zinc-800">
-          <TrendingUp className="size-4 text-emerald-400" />
-        </div>
-        <Link
-          href="/dashboard"
-          onClick={onNavigate}
-          className="font-semibold tracking-tight text-zinc-100"
-        >
-          Trading Journal
-        </Link>
+      <div className="flex h-14 shrink-0 items-center border-b border-zinc-800 px-2">
+        <Logo className="scale-50 -ml-2" />
       </div>
 
       <div className="shrink-0 space-y-4 px-4 py-4">

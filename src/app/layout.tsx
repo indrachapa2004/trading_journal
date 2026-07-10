@@ -13,7 +13,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Trading Journal",
+  title: "Tradventure",
   description: "Track trades, analyze performance, and improve your edge.",
 };
 

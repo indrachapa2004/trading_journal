@@ -13,7 +13,7 @@ import { createClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 
 export const metadata = {
-  title: "Trading Journal — Fix Your Trading Edge",
+  title: "Tradventure — Fix Your Trading Edge",
   description:
     "Most journals are spreadsheets. This is a performance lab. Track your data, tag your emotions, and stop repeating the same mistakes.",
 };

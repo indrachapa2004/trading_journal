@@ -54,10 +54,10 @@ export function LandingHero() {
         <motion.div variants={item}>
           <Badge
             variant="outline"
-            className="mb-8 border-zinc-800 bg-zinc-900/80 px-3 py-1 text-[11px] font-medium uppercase tracking-widest text-zinc-500"
+            className="mb-8 border-emerald-500/30 bg-emerald-500/5 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-emerald-600"
           >
-            <Sparkles className="size-3 text-zinc-400" />
-            Trading journal
+            <Sparkles className="size-3 text-emerald-500" />
+            Built for disciplined traders
           </Badge>
         </motion.div>
 

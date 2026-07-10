@@ -42,7 +42,7 @@ export default function AuthLayout({
             <span className="flex size-7 items-center justify-center rounded-lg bg-zinc-800 text-emerald-400 text-xs font-bold ring-1 ring-white/10">
               TJ
             </span>
-            Trading Journal
+            Tradventure
           </Link>
         </div>
 
@@ -195,7 +195,7 @@ export default function AuthLayout({
           <span className="flex size-7 items-center justify-center rounded-lg bg-zinc-800 text-emerald-400 text-xs font-bold ring-1 ring-white/10">
             TJ
           </span>
-          Trading Journal
+          Tradventure
         </div>
 
         <div className="relative z-10 w-full max-w-sm">{children}</div>

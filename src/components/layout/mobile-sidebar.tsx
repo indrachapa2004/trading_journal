@@ -38,7 +38,7 @@ export function MobileSidebar({
         >
           <Menu className="size-4" />
         </Button>
-        <span className="font-semibold text-zinc-100">Trading Journal</span>
+        <span className="font-semibold text-zinc-100 ml-auto">TJ</span>
       </header>
 
       <Sheet open={open} onOpenChange={setOpen}>
