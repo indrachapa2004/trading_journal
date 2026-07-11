@@ -218,6 +218,25 @@ export async function upsertMonthlyGoal(formData: FormData) {
   return { success: true };
 }
 
+export async function updateAccountBalance(
+  accountId: string,
+  newBalance: number
+) {
+  const { supabase, userId } = await getUserId();
+
+  const { error } = await supabase
+    .from("accounts")
+    .update({ starting_balance: newBalance })
+    .eq("id", accountId)
+    .eq("user_id", userId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/settings");
+  revalidatePath("/dashboard");
+  return { success: true };
+}
+
 export async function exportTradesCsv() {
   const { supabase, userId } = await getUserId();
   const cookieStore = await cookies();

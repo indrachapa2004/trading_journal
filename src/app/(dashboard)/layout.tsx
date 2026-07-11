@@ -1,3 +1,4 @@
+import { Toaster } from "sonner";
 import { getAccounts, getActiveAccount } from "@/lib/data/accounts";
 import { getCurrentUserEmail } from "@/lib/data/trades";
 
@@ -15,12 +16,24 @@ export default async function DashboardLayout({
   ]);
 
   return (
-    <DashboardShell
-      userEmail={userEmail}
-      accounts={accounts}
-      activeAccount={activeAccount}
-    >
-      {children}
-    </DashboardShell>
+    <>
+      <DashboardShell
+        userEmail={userEmail}
+        accounts={accounts}
+        activeAccount={activeAccount}
+      >
+        {children}
+      </DashboardShell>
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          style: {
+            background: "#18181b",
+            border: "1px solid #27272a",
+            color: "#e4e4e7",
+          },
+        }}
+      />
+    </>
   );
 }

@@ -248,8 +248,11 @@ export function AddTradeForm({ rules }: { rules: TradingRule[] }) {
   }
 
   return (
-    <Card className="border-zinc-800/80 bg-zinc-900/50 ring-1 ring-white/5">
-      <CardHeader>
+    <Card
+      size="default"
+      className="border-zinc-800/80 bg-zinc-900/50 ring-1 ring-white/5"
+    >
+      <CardHeader className="p-6 pb-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <CardTitle className="text-zinc-100">Log trade</CardTitle>
@@ -265,7 +268,7 @@ export function AddTradeForm({ rules }: { rules: TradingRule[] }) {
           />
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-6 pt-0">
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
             <div className="grid gap-5 sm:grid-cols-2">
@@ -478,41 +481,43 @@ export function AddTradeForm({ rules }: { rules: TradingRule[] }) {
               </Field>
             </div>
 
-            <Field className="pt-2">
-              <FieldLabel className="text-zinc-300">Emotional state</FieldLabel>
-              <EmotionPicker value={emotion} onChange={setEmotion} />
-            </Field>
+            <div className="space-y-4 rounded-lg border border-zinc-800/80 bg-zinc-900/50 p-6">
+              <Field className="space-y-2">
+                <FieldLabel className="text-zinc-300">Emotional state</FieldLabel>
+                <EmotionPicker value={emotion} onChange={setEmotion} />
+              </Field>
 
-            <Field>
-              <FieldLabel className="text-zinc-300">Mistakes (optional)</FieldLabel>
-              <div className="flex flex-wrap gap-2">
-                {TRADE_MISTAKES.map((m) => (
-                  <Badge
-                    key={m.value}
-                    render={<button type="button" />}
-                    variant="outline"
-                    className={cn(
-                      "cursor-pointer px-3",
-                      mistakes.includes(m.value)
-                        ? "border-rose-500/50 bg-rose-500/10 text-rose-300"
-                        : "border-zinc-700 text-zinc-400"
-                    )}
-                    onClick={() => toggleMistake(m.value)}
-                  >
-                    {m.label}
-                  </Badge>
-                ))}
-              </div>
-            </Field>
+              <Field className="space-y-2">
+                <FieldLabel className="text-zinc-300">Mistakes (optional)</FieldLabel>
+                <div className="flex flex-wrap gap-2">
+                  {TRADE_MISTAKES.map((m) => (
+                    <Badge
+                      key={m.value}
+                      render={<button type="button" />}
+                      variant="outline"
+                      className={cn(
+                        "cursor-pointer px-3",
+                        mistakes.includes(m.value)
+                          ? "border-rose-500/50 bg-rose-500/10 text-rose-300"
+                          : "border-zinc-700 text-zinc-400"
+                      )}
+                      onClick={() => toggleMistake(m.value)}
+                    >
+                      {m.label}
+                    </Badge>
+                  ))}
+                </div>
+              </Field>
 
-            <Field>
-              <FieldLabel className="text-zinc-300">Rule checklist</FieldLabel>
-              <RuleChecklist
-                rules={rules}
-                value={rulesAcknowledged}
-                onChange={setRulesAcknowledged}
-              />
-            </Field>
+              <Field className="space-y-2">
+                <FieldLabel className="text-zinc-300">Rule checklist</FieldLabel>
+                <RuleChecklist
+                  rules={rules}
+                  value={rulesAcknowledged}
+                  onChange={setRulesAcknowledged}
+                />
+              </Field>
+            </div>
 
             <MarkdownNotes
               label="Pre-trade notes"

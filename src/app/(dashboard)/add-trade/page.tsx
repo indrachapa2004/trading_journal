@@ -9,8 +9,8 @@ export default async function AddTradePage() {
   const rules = await getTradingRules();
 
   return (
-    <section className="space-y-6">
-      <div className="space-y-4">
+    <div className="mx-auto max-w-4xl p-6 lg:p-10">
+      <div className="mb-6 space-y-4">
         <LinkButton
           href="/trades"
           variant="ghost"
@@ -30,6 +30,6 @@ export default async function AddTradePage() {
         </div>
       </div>
       <AddTradeForm rules={rules} />
-    </section>
+    </div>
   );
 }

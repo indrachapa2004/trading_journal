@@ -2,12 +2,15 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { Trash2 } from "lucide-react";
+import { Dialog } from "@base-ui/react/dialog";
+import { PencilIcon, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 import {
   addTradingRule,
   createAccount,
   deleteTradingRule,
+  updateAccountBalance,
   updateProfile,
 } from "@/app/(dashboard)/settings/actions";
 import { Button } from "@/components/ui/button";
@@ -34,6 +37,104 @@ const cardContentClass = "space-y-4 px-6 pt-6";
 const cardContentWithFooterClass = "space-y-4 px-6 pb-6 pt-6";
 const cardFooterClass =
   "flex justify-end border-t border-zinc-800 bg-transparent px-6 py-4";
+
+function EditBalanceDialog({
+  account,
+  isPending,
+  startTransition,
+  router,
+}: {
+  account: Account;
+  isPending: boolean;
+  startTransition: React.TransitionStartFunction;
+  router: ReturnType<typeof useRouter>;
+}) {
+  const [newBalance, setNewBalance] = useState(account.starting_balance);
+
+  function handleSave() {
+    startTransition(async () => {
+      const result = await updateAccountBalance(account.id, newBalance);
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        toast.success("Balance updated successfully");
+        router.refresh();
+      }
+    });
+  }
+
+  return (
+    <li className="flex items-center justify-between rounded-lg border border-zinc-800/80 bg-zinc-900/50 px-4 py-2.5 text-sm">
+      <span className="font-medium text-zinc-200">{account.name}</span>
+      <div className="flex items-center gap-3">
+        <span className="font-mono text-zinc-500">
+          {account.currency} · {account.starting_balance.toLocaleString()}
+        </span>
+        <Dialog.Root>
+          <Dialog.Trigger
+            render={
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                className="text-zinc-500 hover:bg-zinc-800/80 hover:text-zinc-200"
+                aria-label={`Edit balance for ${account.name}`}
+              >
+                <PencilIcon className="size-3.5" />
+              </Button>
+            }
+          />
+          <Dialog.Portal>
+            <Dialog.Backdrop className="fixed inset-0 z-50 bg-black/40 data-ending-style:opacity-0 data-starting-style:opacity-0" />
+            <Dialog.Popup className="fixed left-1/2 top-1/2 z-50 w-full max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-lg border border-zinc-800 bg-zinc-950 p-6 shadow-xl data-ending-style:opacity-0 data-starting-style:opacity-0">
+            <Dialog.Title className="mb-1 text-base font-semibold text-zinc-100">
+              Edit balance
+            </Dialog.Title>
+            <Dialog.Description className="mb-4 text-sm text-zinc-500">
+              Update the starting balance for {account.name}
+            </Dialog.Description>
+
+            <div className="space-y-1.5">
+              <Label className="text-zinc-400">New balance</Label>
+              <Input
+                type="number"
+                step="any"
+                value={newBalance}
+                onChange={(e) => setNewBalance(Number(e.target.value))}
+                className="border-zinc-700 bg-zinc-950 font-mono"
+                autoFocus
+              />
+            </div>
+
+            <div className="mt-6 flex justify-end gap-2">
+              <Dialog.Close
+                render={
+                  <Button
+                    variant="ghost"
+                    className="text-zinc-400 hover:text-zinc-200"
+                  >
+                    Cancel
+                  </Button>
+                }
+              />
+              <Dialog.Close
+                render={
+                  <Button
+                    onClick={handleSave}
+                    disabled={isPending}
+                    className="px-6"
+                  >
+                    {isPending ? "Saving..." : "Save"}
+                  </Button>
+                }
+              />
+            </div>
+            </Dialog.Popup>
+          </Dialog.Portal>
+        </Dialog.Root>
+      </div>
+    </li>
+  );
+}
 
 export function SettingsForm({
   profile,
@@ -219,15 +320,13 @@ export function SettingsForm({
             {accounts.length > 0 ? (
               <ul className="space-y-2">
                 {accounts.map((account) => (
-                  <li
+                  <EditBalanceDialog
                     key={account.id}
-                    className="flex items-center justify-between rounded-lg border border-zinc-800/80 bg-zinc-900/50 px-4 py-2.5 text-sm"
-                  >
-                    <span className="font-medium text-zinc-200">{account.name}</span>
-                    <span className="font-mono text-zinc-500">
-                      {account.currency} · {account.starting_balance.toLocaleString()}
-                    </span>
-                  </li>
+                    account={account}
+                    isPending={isPending}
+                    startTransition={startTransition}
+                    router={router}
+                  />
                 ))}
               </ul>
             ) : (
