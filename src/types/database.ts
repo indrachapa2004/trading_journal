@@ -11,6 +11,7 @@ export type EmotionalState =
   | "anxious"
   | "fomo"
   | "revenge";
+export type TradeStatus = "open" | "closed";
 export type ScreenshotPhase = "before" | "after";
 
 export type TradeMistake =
@@ -41,6 +42,7 @@ export type Trade = {
   mistakes: TradeMistake[];
   self_rating: number | null;
   rules_acknowledged: string[];
+  status: TradeStatus;
   screenshot_url: string | null;
   created_at: string;
   updated_at: string;
@@ -155,6 +157,7 @@ export type Database = {
           quantity: number;
           entry_price: number;
           exit_price?: number | null;
+          status?: TradeStatus;
           entry_at: string;
           exit_at?: string | null;
           stop_loss?: number | null;
@@ -223,6 +226,7 @@ export type Database = {
       asset_class: AssetClass;
       trade_direction: TradeDirection;
       emotional_state: EmotionalState;
+      trade_status: TradeStatus;
       screenshot_phase: ScreenshotPhase;
     };
     CompositeTypes: Record<string, never>;

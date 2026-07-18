@@ -44,47 +44,75 @@ import { TRADE_STRATEGIES } from "@/lib/trade-strategies";
 import {
   calculateRiskReward,
   formatRiskReward,
+  formatSignedCurrency,
 } from "@/lib/trades";
 import { cn } from "@/lib/utils";
 import type { EmotionalState, TradingRule } from "@/types/database";
 
-const addTradeFormSchema = z.object({
-  symbol: z
-    .string({ error: "Symbol is required" })
-    .min(1, "Symbol is required")
-    .max(20, "Symbol must be 20 characters or fewer"),
-  direction: z.enum(["long", "short"]),
-  asset_class: z.enum(["stocks", "forex", "crypto", "options", "futures"]),
-  quantity: z
-    .string({ error: "Quantity is required" })
-    .min(1, "Quantity is required")
-    .refine((v) => Number.isFinite(Number(v)), "Quantity must be a valid number")
-    .refine((v) => Number(v) > 0, "Quantity must be positive"),
-  entry_price: z
-    .string({ error: "Entry price is required" })
-    .min(1, "Entry price is required")
-    .refine((v) => Number.isFinite(Number(v)), "Entry price must be a valid number")
-    .refine((v) => Number(v) > 0, "Entry price must be positive"),
-  fees: z
-    .string()
-    .refine(
-      (v) => v === "" || (Number.isFinite(Number(v)) && Number(v) >= 0),
-      "Fees must be zero or positive"
-    ),
-  stop_loss: z
-    .string()
-    .refine(
-      (v) => v === "" || (Number.isFinite(Number(v)) && Number(v) > 0),
-      "Stop loss must be a positive number"
-    ),
-  take_profit: z
-    .string()
-    .refine(
-      (v) => v === "" || (Number.isFinite(Number(v)) && Number(v) > 0),
-      "Take profit must be a positive number"
-    ),
-  strategy: z.string().optional(),
-});
+const addTradeFormSchema = z
+  .object({
+    symbol: z
+      .string({ error: "Symbol is required" })
+      .min(1, "Symbol is required")
+      .max(20, "Symbol must be 20 characters or fewer"),
+    direction: z.enum(["long", "short"]),
+    asset_class: z.enum(["stocks", "forex", "crypto", "options", "futures"]),
+    quantity: z
+      .string({ error: "Quantity is required" })
+      .min(1, "Quantity is required")
+      .refine((v) => Number.isFinite(Number(v)), "Quantity must be a valid number")
+      .refine((v) => Number(v) > 0, "Quantity must be positive"),
+    entry_price: z
+      .string({ error: "Entry price is required" })
+      .min(1, "Entry price is required")
+      .refine((v) => Number.isFinite(Number(v)), "Entry price must be a valid number")
+      .refine((v) => Number(v) > 0, "Entry price must be positive"),
+    exit_price: z
+      .string()
+      .refine(
+        (v) => v === "" || (Number.isFinite(Number(v)) && Number(v) > 0),
+        "Exit price must be a positive number"
+      ),
+    exit_at: z.string().optional(),
+    status: z.enum(["open", "closed"]),
+    fees: z
+      .string()
+      .refine(
+        (v) => v === "" || (Number.isFinite(Number(v)) && Number(v) >= 0),
+        "Fees must be zero or positive"
+      ),
+    stop_loss: z
+      .string()
+      .refine(
+        (v) => v === "" || (Number.isFinite(Number(v)) && Number(v) > 0),
+        "Stop loss must be a positive number"
+      ),
+    take_profit: z
+      .string()
+      .refine(
+        (v) => v === "" || (Number.isFinite(Number(v)) && Number(v) > 0),
+        "Take profit must be a positive number"
+      ),
+    strategy: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.status === "closed") {
+      if (!data.exit_price || data.exit_price === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Exit price is required when status is Closed",
+          path: ["exit_price"],
+        });
+      }
+      if (!data.exit_at || data.exit_at === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Exit time is required when status is Closed",
+          path: ["exit_at"],
+        });
+      }
+    }
+  });
 
 type AddTradeFormValues = z.infer<typeof addTradeFormSchema>;
 
@@ -133,11 +161,17 @@ function RiskRewardBadge({
   entryPrice,
   stopLoss,
   takeProfit,
+  exitPrice,
+  quantity,
+  fees,
 }: {
   direction: "long" | "short";
   entryPrice: string | number | undefined;
   stopLoss: string | number | undefined;
   takeProfit: string | number | undefined;
+  exitPrice: string | number | undefined;
+  quantity: string | number | undefined;
+  fees: string | number | undefined;
 }) {
   const riskReward = useMemo(() => {
     const entry = Number(entryPrice);
@@ -146,20 +180,95 @@ function RiskRewardBadge({
     return calculateRiskReward(direction, entry, stop, target);
   }, [direction, entryPrice, stopLoss, takeProfit]);
 
-  const label = formatRiskReward(riskReward);
-  const isValid = riskReward != null && riskReward > 0;
+  const realizedPnl = useMemo(() => {
+    const entry = Number(entryPrice);
+    const exit = exitPrice === "" ? null : Number(exitPrice);
+    const qty = Number(quantity);
+    const fee = Number(fees) || 0;
+
+    if (exit == null || !Number.isFinite(exit) || entry == null || !Number.isFinite(entry) || !Number.isFinite(qty) || qty <= 0) {
+      return null;
+    }
+
+    const gross =
+      direction === "long"
+        ? (exit - entry) * qty
+        : (entry - exit) * qty;
+
+    return gross - fee;
+  }, [direction, entryPrice, exitPrice, quantity, fees]);
+
+  const realizedRR = useMemo(() => {
+    const entry = Number(entryPrice);
+    const exit = exitPrice === "" ? null : Number(exitPrice);
+    const stop = stopLoss === "" ? null : Number(stopLoss);
+
+    if (
+      exit == null ||
+      stop == null ||
+      !Number.isFinite(exit) ||
+      !Number.isFinite(entry) ||
+      !Number.isFinite(stop)
+    ) {
+      return null;
+    }
+
+    if (direction === "long") {
+      const risk = entry - stop;
+      const reward = exit - entry;
+      if (risk <= 0) return null;
+      return reward / risk;
+    }
+
+    const risk = stop - entry;
+    const reward = entry - exit;
+    if (risk <= 0) return null;
+    return reward / risk;
+  }, [direction, entryPrice, exitPrice, stopLoss]);
+
+  const plannedRR = riskReward;
+  const showRealized = realizedPnl != null && realizedRR != null;
+  const label = showRealized
+    ? `R:R ${formatRiskReward(realizedRR)}`
+    : `R:R ${formatRiskReward(plannedRR)}`;
+
+  const displayRR = realizedRR ?? plannedRR;
+  const isValid = displayRR != null && displayRR > 0;
 
   return (
-    <Badge
-      variant={isValid ? "default" : "outline"}
-      className={cn(
-        "font-mono tabular-nums",
-        isValid && riskReward >= 2 && "bg-emerald-600 text-white",
-        isValid && riskReward < 1 && "bg-rose-500/20 text-rose-400"
+    <div className="flex flex-col items-end gap-1">
+      <Badge
+        variant={isValid ? "default" : "outline"}
+        className={cn(
+          "font-mono tabular-nums",
+          isValid && displayRR >= 2 && "bg-emerald-600 text-white",
+          isValid && displayRR < 1 && "bg-rose-500/20 text-rose-400"
+        )}
+      >
+        {label}
+      </Badge>
+      {showRealized && (
+        <span
+          className={cn(
+            "font-mono text-xs tabular-nums",
+            realizedPnl > 0 && "text-emerald-400",
+            realizedPnl < 0 && "text-rose-400",
+            realizedPnl === 0 && "text-zinc-500"
+          )}
+        >
+          {formatSignedCurrency(realizedPnl)}
+        </span>
       )}
-    >
-      R:R {label}
-    </Badge>
+    </div>
+  );
+}
+
+function SectionHeading({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="col-span-full">
+      <h3 className="text-sm font-medium text-zinc-400">{children}</h3>
+      <div className="mt-1.5 border-t border-zinc-800/60" />
+    </div>
   );
 }
 
@@ -185,6 +294,9 @@ export function AddTradeForm({ rules }: { rules: TradingRule[] }) {
       asset_class: "stocks",
       quantity: "",
       entry_price: "",
+      exit_price: "",
+      exit_at: "",
+      status: "open",
       fees: "0",
       stop_loss: "",
       take_profit: "",
@@ -196,6 +308,12 @@ export function AddTradeForm({ rules }: { rules: TradingRule[] }) {
   const watchedEntry = useWatch({ control: form.control, name: "entry_price" });
   const watchedStop = useWatch({ control: form.control, name: "stop_loss" });
   const watchedTarget = useWatch({ control: form.control, name: "take_profit" });
+  const watchedExitPrice = useWatch({ control: form.control, name: "exit_price" });
+  const watchedQuantity = useWatch({ control: form.control, name: "quantity" });
+  const watchedFees = useWatch({ control: form.control, name: "fees" });
+  const watchedStatus = useWatch({ control: form.control, name: "status" });
+
+  const isClosed = watchedStatus === "closed";
 
   function toggleMistake(value: string) {
     setMistakes((current) =>
@@ -220,6 +338,9 @@ export function AddTradeForm({ rules }: { rules: TradingRule[] }) {
       formData.append("asset_class", values.asset_class);
       formData.append("quantity", values.quantity);
       formData.append("entry_price", values.entry_price);
+      formData.append("exit_price", values.exit_price ?? "");
+      formData.append("exit_at", values.exit_at ?? "");
+      formData.append("status", values.status);
       formData.append("fees", values.fees || "0");
       formData.append("stop_loss", values.stop_loss ?? "");
       formData.append("take_profit", values.take_profit ?? "");
@@ -265,6 +386,9 @@ export function AddTradeForm({ rules }: { rules: TradingRule[] }) {
             entryPrice={watchedEntry}
             stopLoss={watchedStop}
             takeProfit={watchedTarget}
+            exitPrice={watchedExitPrice}
+            quantity={watchedQuantity}
+            fees={watchedFees}
           />
         </div>
       </CardHeader>
@@ -272,6 +396,38 @@ export function AddTradeForm({ rules }: { rules: TradingRule[] }) {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
             <div className="grid gap-5 sm:grid-cols-2">
+              {/* Status toggle - full width */}
+              <Field className="sm:col-span-2">
+                <FieldLabel className="text-zinc-300">Status</FieldLabel>
+                <Controller
+                  name="status"
+                  control={form.control}
+                  render={({ field }) => (
+                    <div className="flex rounded-lg border border-zinc-700 p-1">
+                      <Button
+                        type="button"
+                        variant={field.value === "open" ? "default" : "ghost"}
+                        className="flex-1"
+                        onClick={() => field.onChange("open")}
+                      >
+                        Open
+                      </Button>
+                      <Button
+                        type="button"
+                        variant={field.value === "closed" ? "default" : "ghost"}
+                        className="flex-1"
+                        onClick={() => field.onChange("closed")}
+                      >
+                        Closed
+                      </Button>
+                    </div>
+                  )}
+                />
+              </Field>
+
+              {/* ===== ENTRY DETAILS ===== */}
+              <SectionHeading>Entry Details</SectionHeading>
+
               <Field data-invalid={!!form.formState.errors.symbol}>
                 <FieldLabel htmlFor="symbol" className="text-zinc-300">Symbol</FieldLabel>
                 <Controller
@@ -389,28 +545,94 @@ export function AddTradeForm({ rules }: { rules: TradingRule[] }) {
                 <FieldError errors={[form.formState.errors.entry_price]} />
               </Field>
 
-              <Field data-invalid={!!form.formState.errors.fees}>
-                <FieldLabel htmlFor="fees" className="text-zinc-300">Fees / commission</FieldLabel>
-                <Controller
-                  name="fees"
-                  control={form.control}
-                  render={({ field, fieldState }) => (
-                    <FormTextInput
-                      id="fees"
-                      type="number"
-                      step="any"
-                      placeholder="0.00"
-                      name={field.name}
-                      value={field.value}
-                      onBlur={field.onBlur}
-                      onChange={field.onChange}
-                      error={fieldState.error}
-                    />
-                  )}
+              <Field>
+                <FieldLabel htmlFor="entry_time_input" className="text-zinc-300">Entry time</FieldLabel>
+                <Input
+                  id="entry_time_input"
+                  type="datetime-local"
+                  className="border-zinc-700 bg-zinc-950 font-mono"
                 />
-                <FieldError errors={[form.formState.errors.fees]} />
               </Field>
 
+              {/* ===== EXIT DETAILS ===== */}
+              <SectionHeading>Exit Details</SectionHeading>
+
+              {!isClosed && (
+                <p className="col-span-full -mt-2 text-xs text-zinc-500">
+                  Set status to "Closed" to enter exit details for already closed trades.
+                </p>
+              )}
+
+              {isClosed && (
+                <>
+                  <Field data-invalid={!!form.formState.errors.exit_price}>
+                    <FieldLabel htmlFor="exit_price" className="text-zinc-300">Exit price</FieldLabel>
+                    <Controller
+                      name="exit_price"
+                      control={form.control}
+                      render={({ field, fieldState }) => (
+                        <FormTextInput
+                          id="exit_price"
+                          type="number"
+                          step="any"
+                          placeholder="0.00"
+                          name={field.name}
+                          value={field.value}
+                          onBlur={field.onBlur}
+                          onChange={field.onChange}
+                          error={fieldState.error}
+                        />
+                      )}
+                    />
+                    <FieldError errors={[form.formState.errors.exit_price]} />
+                  </Field>
+
+                  <Field data-invalid={!!form.formState.errors.exit_at}>
+                    <FieldLabel htmlFor="exit_at" className="text-zinc-300">Exit time</FieldLabel>
+                    <Controller
+                      name="exit_at"
+                      control={form.control}
+                      render={({ field, fieldState }) => (
+                        <Input
+                          id="exit_at"
+                          type="datetime-local"
+                          name={field.name}
+                          value={field.value ?? ""}
+                          onBlur={field.onBlur}
+                          onChange={(e) => field.onChange(e.target.value)}
+                          aria-invalid={!!fieldState.error}
+                          className="border-zinc-700 bg-zinc-950 font-mono"
+                        />
+                      )}
+                    />
+                    <FieldError errors={[form.formState.errors.exit_at]} />
+                  </Field>
+
+                  <Field data-invalid={!!form.formState.errors.fees}>
+                    <FieldLabel htmlFor="fees" className="text-zinc-300">Fees / commission</FieldLabel>
+                    <Controller
+                      name="fees"
+                      control={form.control}
+                      render={({ field, fieldState }) => (
+                        <FormTextInput
+                          id="fees"
+                          type="number"
+                          step="any"
+                          placeholder="0.00"
+                          name={field.name}
+                          value={field.value}
+                          onBlur={field.onBlur}
+                          onChange={field.onChange}
+                          error={fieldState.error}
+                        />
+                      )}
+                    />
+                    <FieldError errors={[form.formState.errors.fees]} />
+                  </Field>
+                </>
+              )}
+
+              {/* Stop loss & Take profit — always visible */}
               <Field data-invalid={!!form.formState.errors.stop_loss}>
                 <FieldLabel htmlFor="stop_loss" className="text-zinc-300">Stop loss</FieldLabel>
                 <Controller
@@ -481,7 +703,16 @@ export function AddTradeForm({ rules }: { rules: TradingRule[] }) {
               </Field>
             </div>
 
-            <div className="space-y-4 rounded-lg border border-zinc-800/80 bg-zinc-900/50 p-6">
+            {!isClosed && (
+              <div className="mt-4 rounded-lg border border-zinc-800/80 bg-zinc-900/50 p-4">
+                <p className="text-sm text-zinc-400">
+                  This trade will be saved as <span className="font-semibold text-zinc-200">Open</span>.
+                  You can add exit details later from the trade detail page.
+                </p>
+              </div>
+            )}
+
+            <div className="mt-6 space-y-4 rounded-lg border border-zinc-800/80 bg-zinc-900/50 p-6">
               <Field className="space-y-2">
                 <FieldLabel className="text-zinc-300">Emotional state</FieldLabel>
                 <EmotionPicker value={emotion} onChange={setEmotion} />

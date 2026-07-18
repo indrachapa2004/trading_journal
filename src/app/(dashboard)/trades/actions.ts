@@ -10,26 +10,49 @@ import { TRADE_MISTAKE_VALUES } from "@/lib/trade-psychology";
 import { createClient } from "@/lib/supabase/server";
 import type { AssetClass, ScreenshotPhase } from "@/types/database";
 
-const addTradeSchema = z.object({
-  symbol: z.string().min(1, "Symbol is required").max(20),
-  direction: z.enum(["long", "short"]),
-  asset_class: z.enum(["stocks", "forex", "crypto", "options", "futures"]),
-  quantity: z.coerce.number().positive("Quantity must be positive"),
-  entry_price: z.coerce.number().positive("Entry price must be positive"),
-  exit_price: z.coerce.number().positive().optional().or(z.literal("")),
-  entry_at: z.string().optional(),
-  exit_at: z.string().optional(),
-  stop_loss: z.coerce.number().positive().optional().or(z.literal("")),
-  take_profit: z.coerce.number().positive().optional().or(z.literal("")),
-  fees: z.coerce.number().min(0).default(0),
-  strategy: z.string().optional(),
-  emotional_state: z.string().optional(),
-  pre_trade_notes: z.string().optional(),
-  post_trade_notes: z.string().optional(),
-  rules_acknowledged: z.string().optional(),
-  mistakes: z.string().optional(),
-  self_rating: z.coerce.number().int().min(1).max(10).optional().or(z.literal("")),
-});
+const addTradeSchema = z
+  .object({
+    symbol: z.string().min(1, "Symbol is required").max(20),
+    direction: z.enum(["long", "short"]),
+    asset_class: z.enum(["stocks", "forex", "crypto", "options", "futures"]),
+    quantity: z.coerce.number().positive("Quantity must be positive"),
+    entry_price: z.coerce.number().positive("Entry price must be positive"),
+    exit_price: z.coerce.number().positive().optional().or(z.literal("")),
+    status: z.enum(["open", "closed"]).default("open"),
+    entry_at: z.string().optional(),
+    exit_at: z.string().optional(),
+    stop_loss: z.coerce.number().positive().optional().or(z.literal("")),
+    take_profit: z.coerce.number().positive().optional().or(z.literal("")),
+    fees: z.coerce.number().min(0).default(0),
+    strategy: z.string().optional(),
+    emotional_state: z.string().optional(),
+    pre_trade_notes: z.string().optional(),
+    post_trade_notes: z.string().optional(),
+    rules_acknowledged: z.string().optional(),
+    mistakes: z.string().optional(),
+    self_rating: z.coerce.number().int().min(1).max(10).optional().or(z.literal("")),
+  })
+  .superRefine((data, ctx) => {
+    if (data.status === "closed") {
+      const hasExitPrice =
+        data.exit_price != null && data.exit_price !== "" && Number(data.exit_price) > 0;
+      if (!hasExitPrice) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Exit price is required when status is Closed",
+          path: ["exit_price"],
+        });
+      }
+      const hasExitAt = data.exit_at != null && data.exit_at !== "";
+      if (!hasExitAt) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Exit time is required when status is Closed",
+          path: ["exit_at"],
+        });
+      }
+    }
+  });
 
 const tradeSchema = z.object({
   symbol: z.string().min(1, "Symbol is required").max(20),
@@ -211,6 +234,7 @@ export async function createTrade(formData: FormData) {
       quantity: data.quantity,
       entry_price: data.entry_price,
       exit_price: exitPrice,
+      status: data.status,
       entry_at: entryAt,
       exit_at: exitAt,
       stop_loss: parseOptionalNumber(data.stop_loss),
