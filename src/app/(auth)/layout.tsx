@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Logo } from "@/components/ui/Logo";
 
 export default function AuthLayout({
   children,
@@ -35,15 +36,7 @@ export default function AuthLayout({
 
         {/* Logo top-left */}
         <div className="relative z-10 p-10">
-          <Link
-            href="/"
-            className="flex items-center gap-2.5 font-semibold tracking-tight text-zinc-100"
-          >
-            <span className="flex size-7 items-center justify-center rounded-lg bg-zinc-800 text-emerald-400 text-xs font-bold ring-1 ring-white/10">
-              TJ
-            </span>
-            Tradventure
-          </Link>
+          <Logo />
         </div>
 
         {/* UI Fragment — Profit card + equity curve */}
@@ -191,11 +184,8 @@ export default function AuthLayout({
         />
 
         {/* Mobile-only logo */}
-        <div className="lg:hidden mb-8 flex items-center gap-2 font-semibold tracking-tight text-zinc-100">
-          <span className="flex size-7 items-center justify-center rounded-lg bg-zinc-800 text-emerald-400 text-xs font-bold ring-1 ring-white/10">
-            TJ
-          </span>
-          Tradventure
+        <div className="lg:hidden mb-8">
+          <Logo />
         </div>
 
         <div className="relative z-10 w-full max-w-sm">{children}</div>

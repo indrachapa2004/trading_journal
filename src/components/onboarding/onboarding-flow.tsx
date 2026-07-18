@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Logo } from "@/components/ui/Logo";
 import { cn } from "@/lib/utils";
 import { completeOnboarding, skipOnboarding } from "@/app/onboarding/actions";
 
@@ -375,13 +376,8 @@ export function OnboardingFlow() {
 
       <div className="relative z-10 w-full max-w-md">
         {/* Logo */}
-        <div className="mb-8 flex items-center gap-2.5">
-          <span className="flex size-7 items-center justify-center rounded-lg bg-zinc-800 text-emerald-400 text-xs font-bold ring-1 ring-white/10">
-            TJ
-          </span>
-          <span className="text-sm font-semibold tracking-tight text-zinc-300">
-            Tradventure
-          </span>
+        <div className="mb-8">
+          <Logo />
         </div>
 
         {/* Card */}

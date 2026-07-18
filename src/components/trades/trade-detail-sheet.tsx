@@ -94,7 +94,7 @@ export function TradeDetailSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="w-full overflow-y-auto border-zinc-800 bg-zinc-950 sm:max-w-xl"
+        className="w-full overflow-y-auto border-zinc-800 bg-zinc-950 p-6 sm:max-w-xl"
       >
         {loading || !trade ? (
           <div className="flex h-full items-center justify-center text-zinc-500">
@@ -138,7 +138,7 @@ export function TradeDetailSheet({
               </div>
             </SheetHeader>
 
-            <div className="space-y-6 py-4">
+            <div className="space-y-6">
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                 <Metric
                   label="P&L"

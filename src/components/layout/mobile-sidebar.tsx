@@ -5,6 +5,7 @@ import { Menu } from "lucide-react";
 
 import { SidebarContent } from "@/components/layout/sidebar-content";
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/ui/Logo";
 import {
   Sheet,
   SheetContent,
@@ -38,7 +39,9 @@ export function MobileSidebar({
         >
           <Menu className="size-4" />
         </Button>
-        <span className="font-semibold text-zinc-100 ml-auto">TJ</span>
+        <div className="ml-auto">
+          <Logo />
+        </div>
       </header>
 
       <Sheet open={open} onOpenChange={setOpen}>

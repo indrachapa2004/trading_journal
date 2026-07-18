@@ -7,6 +7,7 @@ import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Logo } from "@/components/ui/Logo";
 import { signInAction, signUpAction } from "@/app/(auth)/actions";
 import { createClient } from "@/lib/supabase/client";
 import { getPasswordStrength, validatePassword } from "@/lib/password";
@@ -63,9 +64,25 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
 
     setLoading(true);
 
+    // Bypass length check for the dev shortcut (admin / 123)
+    if (mode === "login" && !(email === "admin" && password === "123")) {
+      if (password.length < 6) {
+        setError("Password must be at least 6 characters.");
+        setLoading(false);
+        return;
+      }
+    }
+
     try {
       if (mode === "login") {
-        const result = await signInAction({ email, password });
+        // Dev shortcut — swap admin/123 for the actual test account
+        const DEV_EMAIL = process.env.NEXT_PUBLIC_DEV_TEST_EMAIL ?? "dev@trading-journal.test";
+        const DEV_PASSWORD = process.env.NEXT_PUBLIC_DEV_TEST_PASSWORD ?? "DevPass123!";
+        const credentials =
+          email === "admin" && password === "123"
+            ? { email: DEV_EMAIL, password: DEV_PASSWORD }
+            : { email, password };
+        const result = await signInAction(credentials);
         if (result?.error) setError(result.error);
       } else {
         const result = await signUpAction({
@@ -96,6 +113,28 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
     });
   }
 
+  async function handleDevAutoLogin() {
+    if (process.env.NODE_ENV !== "development") return;
+
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+
+    // Read test account from env vars — set NEXT_PUBLIC_DEV_TEST_EMAIL and
+    // NEXT_PUBLIC_DEV_TEST_PASSWORD in .env.local to match a real Supabase user.
+    const DEV_EMAIL = process.env.NEXT_PUBLIC_DEV_TEST_EMAIL ?? "dev@trading-journal.test";
+    const DEV_PASSWORD = process.env.NEXT_PUBLIC_DEV_TEST_PASSWORD ?? "DevPass123!";
+
+    try {
+      const result = await signInAction({ email: DEV_EMAIL, password: DEV_PASSWORD });
+      if (result?.error) setError(result.error);
+    } catch {
+      // redirect() throws — expected on successful auth
+    } finally {
+      setLoading(false);
+    }
+  }
+
   const passwordStrength =
     mode === "signup" ? getPasswordStrength(password) : [];
 
@@ -108,13 +147,8 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
     >
       {/* Branding */}
       <div className="mb-7">
-        <div className="flex items-center gap-2.5 mb-5">
-          <span className="flex size-8 items-center justify-center rounded-lg bg-zinc-800 text-emerald-400 text-xs font-bold ring-1 ring-white/10">
-            TJ
-          </span>
-          <span className="text-sm font-semibold tracking-tight text-zinc-300">
-            Tradventure
-          </span>
+        <div className="mb-5">
+          <Logo />
         </div>
         <h1 className="text-xl font-semibold tracking-tight text-zinc-50">
           {mode === "login" ? "Sign in to your edge." : "Create your account."}
@@ -179,7 +213,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
             <Mail className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-zinc-500" />
             <Input
               id="email"
-              type="email"
+              type="text"
               autoComplete="email"
               placeholder="you@example.com"
               required
@@ -221,7 +255,6 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
               }
               placeholder="••••••••"
               required
-              minLength={mode === "signup" ? 8 : 6}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className={cn(
@@ -306,6 +339,24 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
         <GoogleIcon />
         {googleLoading ? "Redirecting…" : "Continue with Google"}
       </button>
+
+      {/* Dev Auto-Login — only visible in local development */}
+      {process.env.NODE_ENV === "development" && (
+        <div className="mt-5">
+          <button
+            type="button"
+            onClick={handleDevAutoLogin}
+            disabled={loading}
+            className={cn(
+              "flex w-full items-center justify-center gap-2 rounded-md border border-dashed border-zinc-700/40 bg-zinc-800/20 px-4 py-2 text-sm text-zinc-500 transition-colors",
+              "hover:border-zinc-600/60 hover:text-zinc-300",
+              "disabled:opacity-50"
+            )}
+          >
+            ⚡ Dev Auto-Login
+          </button>
+        </div>
+      )}
 
       {/* Footer link */}
       <p className="mt-6 text-center text-xs text-zinc-600">
