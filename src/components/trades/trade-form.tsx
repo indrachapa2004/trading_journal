@@ -253,17 +253,17 @@ export function TradeForm({ trade }: TradeFormProps) {
           </div>
 
           {error ? <p className="text-sm text-destructive">{error}</p> : null}
+          <CardFooter className="p-0 pt-6">
+            <Button type="submit" disabled={isPending} className="w-full sm:w-auto">
+              {isPending
+                ? "Saving..."
+                : isEditing
+                  ? "Save changes"
+                  : "Create trade"}
+            </Button>
+          </CardFooter>
         </form>
       </CardContent>
-      <CardFooter className="p-6 pt-0">
-        <Button type="submit" disabled={isPending} className="w-full sm:w-auto">
-          {isPending
-            ? "Saving..."
-            : isEditing
-              ? "Save changes"
-              : "Create trade"}
-        </Button>
-      </CardFooter>
     </Card>
   );
 }

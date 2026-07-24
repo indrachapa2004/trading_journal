@@ -104,7 +104,6 @@ export function TradesTable({
                 >
                   <TradeRowActions
                     tradeId={trade.id}
-                    onView={() => onViewTrade?.(trade.id)}
                   />
                 </TableCell>
               ) : null}

@@ -17,10 +17,8 @@ import { cn } from "@/lib/utils";
 
 export function TradeRowActions({
   tradeId,
-  onView,
 }: {
   tradeId: string;
-  onView?: () => void;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -47,7 +45,7 @@ export function TradeRowActions({
       </DropdownMenuTrigger>
       
       <DropdownMenuContent align="end" className="w-40">
-        <DropdownMenuItem onClick={onView}>
+        <DropdownMenuItem onClick={() => router.push(`/trades/${tradeId}`)}>
           <Eye className="size-4 mr-2" />
           <span>View details</span>
         </DropdownMenuItem>
