@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { useRef, useState, useTransition } from "react";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 import {
   deleteScreenshot,
@@ -32,30 +34,52 @@ export function ScreenshotGallery({
   const [error, setError] = useState<string | null>(null);
   const [phase, setPhase] = useState<ScreenshotPhase>("before");
   const [isPending, startTransition] = useTransition();
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const beforeShots = screenshots.filter((s) => s.phase === "before");
   const afterShots = screenshots.filter((s) => s.phase === "after");
 
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0] ?? null;
+    setSelectedFile(file);
+  }
+
   function handleUpload(formData: FormData) {
     setError(null);
     formData.set("phase", phase);
+
     startTransition(async () => {
       const result = await uploadScreenshot(tradeId, formData);
       if (result && "error" in result) {
         setError(result.error ?? "Upload failed.");
+        toast.error(result.error ?? "Upload failed.");
         return;
       }
       formRef.current?.reset();
+      setSelectedFile(null);
+      toast.success("Screenshot uploaded");
     });
   }
 
   function handleDelete(screenshotId: string) {
-    if (!confirm("Remove this screenshot?")) return;
     startTransition(async () => {
       const result = await deleteScreenshot(screenshotId, tradeId);
       if (result && "error" in result) {
         setError(result.error ?? "Delete failed.");
+        toast.error(result.error ?? "Delete failed.");
+        return;
       }
+
+      toast("Screenshot removed", {
+        description: "The screenshot has been deleted.",
+        duration: 6000,
+        action: {
+          label: "Undo",
+          onClick: () => {
+            toast.info("Screenshots cannot be restored after deletion. Please re-upload.");
+          },
+        },
+      });
     });
   }
 
@@ -68,7 +92,20 @@ export function ScreenshotGallery({
       >
         <div className="flex-1 space-y-2">
           <Label htmlFor="file" className="text-zinc-400">Upload screenshot</Label>
-          <Input id="file" name="file" type="file" accept="image/*" required className="border-zinc-700 bg-zinc-950" />
+          <Input
+            id="file"
+            name="file"
+            type="file"
+            accept="image/*"
+            required
+            className="border-zinc-700 bg-zinc-950"
+            onChange={handleFileChange}
+          />
+          {selectedFile ? (
+            <p className="text-xs text-zinc-500">
+              {selectedFile.name} ({(selectedFile.size / 1024).toFixed(1)} KB)
+            </p>
+          ) : null}
         </div>
         <div className="w-full space-y-2 sm:w-36">
           <Label className="text-zinc-400">Phase</Label>
@@ -87,9 +124,28 @@ export function ScreenshotGallery({
           <Input id="caption" name="caption" placeholder="Entry chart" className="border-zinc-700 bg-zinc-950" />
         </div>
         <Button type="submit" disabled={isPending}>
-          {isPending ? "Uploading..." : "Upload"}
+          {isPending ? (
+            <span className="flex items-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Uploading...
+            </span>
+          ) : (
+            "Upload"
+          )}
         </Button>
       </form>
+
+      {/* Indeterminate progress indicator (shown during upload) */}
+      {isPending ? (
+        <div className="space-y-1">
+          <div className="flex items-center justify-between text-xs text-zinc-500">
+            <span>Uploading screenshot...</span>
+          </div>
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-800">
+            <div className="h-full w-1/3 animate-pulse rounded-full bg-emerald-500" />
+          </div>
+        </div>
+      ) : null}
 
       {error ? <p className="text-sm text-rose-400">{error}</p> : null}
 

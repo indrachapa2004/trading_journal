@@ -56,6 +56,14 @@ export function PnlCalendar({
       })
     : [];
 
+  // Check if current month has any trades at all
+  const hasMonthTrades = useMemo(() => {
+    return dailyPnl.some((entry) => {
+      const entryDate = new Date(entry.date);
+      return isSameMonth(entryDate, month);
+    });
+  }, [dailyPnl, month]);
+
   return (
     <Card className={terminalCard}>
       <div className="space-y-4 p-6">
@@ -91,6 +99,14 @@ export function PnlCalendar({
             <div key={d}>{d}</div>
           ))}
         </div>
+        {!hasMonthTrades ? (
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <p className="text-sm font-medium text-zinc-500">No trades this month</p>
+            <p className="mt-1 text-xs text-zinc-600">
+              Navigate to a month with closed trades to see the P&L heatmap.
+            </p>
+          </div>
+        ) : (
         <div className="grid grid-cols-7 gap-1">
           {days.map((day) => {
             const key = format(day, "yyyy-MM-dd");
@@ -134,6 +150,7 @@ export function PnlCalendar({
             );
           })}
         </div>
+        )}
 
         {selectedDate ? (
           <div className="rounded-lg border border-zinc-800 bg-zinc-950/80 p-4">

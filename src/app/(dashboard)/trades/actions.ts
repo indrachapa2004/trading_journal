@@ -430,18 +430,39 @@ export async function bulkImportTrades(rows: z.infer<typeof bulkImportRowSchema>
 export async function deleteTrade(tradeId: string) {
   const { supabase, userId } = await getUserId();
 
+  // Fetch the trade data before deleting (for undo)
+  const { data: trade } = await supabase
+    .from("trades")
+    .select("*")
+    .eq("id", tradeId)
+    .eq("user_id", userId)
+    .single();
+
+  if (!trade) {
+    return { error: "Trade not found." };
+  }
+
   const { data: screenshots } = await supabase
     .from("trade_screenshots")
-    .select("storage_path")
+    .select("storage_path, id")
     .eq("trade_id", tradeId)
     .eq("user_id", userId);
 
+  // Delete screenshots from storage
   if (screenshots?.length) {
     await supabase.storage
       .from("trade-screenshots")
       .remove(screenshots.map((s) => s.storage_path));
   }
 
+  // Delete screenshots rows
+  await supabase
+    .from("trade_screenshots")
+    .delete()
+    .eq("trade_id", tradeId)
+    .eq("user_id", userId);
+
+  // Delete trade
   const { error } = await supabase
     .from("trades")
     .delete()
@@ -454,7 +475,7 @@ export async function deleteTrade(tradeId: string) {
 
   revalidatePath("/dashboard");
   revalidatePath("/trades");
-  return { success: true };
+  return { success: true, trade, screenshotPaths: screenshots?.map((s) => s.storage_path) ?? [] };
 }
 
 export async function uploadScreenshot(

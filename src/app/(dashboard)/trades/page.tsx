@@ -1,6 +1,8 @@
+import { FileSpreadsheet } from "lucide-react";
 import { CsvImport } from "@/components/trades/csv-import";
 import { ExportTradesButton } from "@/components/trades/export-trades-button";
-import { TradesTableWithSheet } from "@/components/trades/trades-table-with-sheet";
+import { TradesTableWithFilters } from "@/components/trades/trades-table-with-filters";
+import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/layout/page-header";
 import { LinkButton } from "@/components/ui/link-button";
 import { Card } from "@/components/ui/card";
@@ -36,11 +38,16 @@ export default async function TradesPage() {
           </div>
 
           {tradeList.length === 0 ? (
-            <p className="py-12 text-center text-sm text-zinc-500">
-              No trades logged yet.
-            </p>
+            <EmptyState
+              icon="FileSpreadsheet"
+              title="No trades logged yet"
+              description="Your journal is empty. Start by adding your first trade — you can fill in details like screenshots and psychology notes later."
+              actionLabel="Add your first trade"
+              actionHref="/add-trade"
+              secondaryHint="Tip: You can also import trades from a CSV file using the button above."
+            />
           ) : (
-            <TradesTableWithSheet trades={tradeList} currency={currency} />
+            <TradesTableWithFilters trades={tradeList} currency={currency} />
           )}
         </div>
       </Card>

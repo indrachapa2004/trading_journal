@@ -1,8 +1,9 @@
 "use client";
 
+import { useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
 import { Eye, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 import { deleteTrade } from "@/app/(dashboard)/trades/actions";
 import { buttonVariants } from "@/components/ui/button";
@@ -15,21 +16,66 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 
+const UNDO_TIMEOUT_MS = 10000;
+
 export function TradeRowActions({
   tradeId,
+  onDeleteOptimistic,
+  onUndoOptimistic,
 }: {
   tradeId: string;
+  /** Called immediately to remove the row from the UI */
+  onDeleteOptimistic?: () => void;
+  /** Called when Undo is clicked to restore the row in the UI */
+  onUndoOptimistic?: () => void;
 }) {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const cancelledRef = useRef(false);
+
+  const cleanup = useCallback(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+  }, []);
 
   function handleDelete() {
-    if (!confirm("Delete this trade? This cannot be undone.")) return;
+    cleanup();
+    cancelledRef.current = false;
 
-    startTransition(async () => {
-      const result = await deleteTrade(tradeId);
-      if (result && "error" in result) alert(result.error);
+    // Immediately remove from list
+    onDeleteOptimistic?.();
+
+    // Show undo toast
+    toast("Trade deleted", {
+      description: "Tap Undo to restore. Deleting in 10s...",
+      duration: UNDO_TIMEOUT_MS + 1000,
+      action: {
+        label: "Undo",
+        onClick: () => {
+          cancelledRef.current = true;
+          cleanup();
+          onUndoOptimistic?.();
+          toast.success("Delete cancelled");
+        },
+      },
     });
+
+    // Actually delete after timeout
+    timeoutRef.current = setTimeout(async () => {
+      if (cancelledRef.current) return;
+
+      const result = await deleteTrade(tradeId);
+      if (result && "error" in result) {
+        toast.error(result.error ?? "Delete failed");
+        onUndoOptimistic?.(); // restore row on error
+        return;
+      }
+
+      toast.success("Trade permanently deleted");
+      router.refresh();
+    }, UNDO_TIMEOUT_MS);
   }
 
   return (
@@ -39,7 +85,6 @@ export function TradeRowActions({
           buttonVariants({ variant: "ghost", size: "icon-sm" }),
           "text-muted-foreground"
         )}
-        disabled={isPending}
       >
         <MoreHorizontal className="size-4" />
       </DropdownMenuTrigger>
@@ -50,7 +95,6 @@ export function TradeRowActions({
           <span>View details</span>
         </DropdownMenuItem>
         
-        {/* FIX: Removed asChild/Link and replaced with onClick + router.push */}
         <DropdownMenuItem onClick={() => router.push(`/trades/${tradeId}/edit`)}>
           <Pencil className="size-4 mr-2" />
           <span>Edit</span>
@@ -60,7 +104,7 @@ export function TradeRowActions({
         
         <DropdownMenuItem variant="destructive" onClick={handleDelete}>
           <Trash2 className="size-4 mr-2" />
-          <span>{isPending ? "Deleting..." : "Delete"}</span>
+          <span>Delete</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

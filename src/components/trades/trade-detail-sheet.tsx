@@ -4,8 +4,9 @@ import { format } from "date-fns";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 import { Pencil, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 import {
   deleteTrade,
@@ -33,6 +34,8 @@ import {
 import { cn } from "@/lib/utils";
 import type { Trade, TradeScreenshot } from "@/types/database";
 
+const UNDO_TIMEOUT_MS = 10000;
+
 type ScreenshotWithUrl = TradeScreenshot & { url: string };
 
 type TradeDetailSheetProps = {
@@ -52,7 +55,16 @@ export function TradeDetailSheet({
   const [trade, setTrade] = useState<Trade | null>(null);
   const [screenshots, setScreenshots] = useState<ScreenshotWithUrl[]>([]);
   const [loading, setLoading] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [isHidden, setIsHidden] = useState(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const cancelledRef = useRef(false);
+
+  const cleanup = useCallback(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+  }, []);
 
   useEffect(() => {
     if (!open || !tradeId) return;
@@ -66,6 +78,15 @@ export function TradeDetailSheet({
       setLoading(false);
     });
   }, [open, tradeId]);
+
+  // Reset hidden state when sheet opens/closes
+  useEffect(() => {
+    if (!open) {
+      setIsHidden(false);
+      cleanup();
+      cancelledRef.current = false;
+    }
+  }, [open, cleanup]);
 
   if (!tradeId || !open) return null;
 
@@ -82,12 +103,37 @@ export function TradeDetailSheet({
   const afterShots = screenshots.filter((s) => s.phase === "after");
 
   function handleDelete() {
-    if (!tradeId || !confirm("Delete this trade?")) return;
-    startTransition(async () => {
+    if (!tradeId) return;
+    cleanup();
+    cancelledRef.current = false;
+
+    // Immediately hide content
+    setIsHidden(true);
+
+    // Show undo toast
+    toast("Trade deleted", {
+      description: "Tap Undo to restore. Deleting in 10s...",
+      duration: UNDO_TIMEOUT_MS + 1000,
+      action: {
+        label: "Undo",
+        onClick: () => {
+          cancelledRef.current = true;
+          cleanup();
+          setIsHidden(false);
+          toast.success("Delete cancelled");
+        },
+      },
+    });
+
+    // Actually delete after timeout
+    timeoutRef.current = setTimeout(async () => {
+      if (cancelledRef.current) return;
+
       await deleteTrade(tradeId);
+      toast.success("Trade permanently deleted");
       onOpenChange(false);
       router.refresh();
-    });
+    }, UNDO_TIMEOUT_MS);
   }
 
   return (
@@ -99,6 +145,12 @@ export function TradeDetailSheet({
         {loading || !trade ? (
           <div className="flex h-full items-center justify-center text-zinc-500">
             Loading trade...
+          </div>
+        ) : isHidden ? (
+          <div className="flex h-full items-center justify-center">
+            <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 px-6 py-12 text-center">
+              <p className="text-sm text-zinc-500">Trade hidden — undo available in toast</p>
+            </div>
           </div>
         ) : (
           <>
@@ -129,7 +181,6 @@ export function TradeDetailSheet({
                   variant="outline"
                   size="sm"
                   onClick={handleDelete}
-                  disabled={isPending}
                   className="text-rose-400 hover:text-rose-300"
                 >
                   <Trash2 className="size-3.5" />

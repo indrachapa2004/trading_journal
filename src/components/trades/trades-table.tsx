@@ -1,6 +1,7 @@
 "use client";
 
 import { format } from "date-fns";
+import { ArrowRight, TrendingDown, TrendingUp } from "lucide-react";
 
 import { TradeRowActions } from "@/components/trades/trade-row-actions";
 import { Badge } from "@/components/ui/badge";
@@ -25,10 +26,16 @@ export function TradesTable({
   trades,
   compact = false,
   onViewTrade,
+  onDeleteOptimistic,
+  onUndoOptimistic,
 }: {
   trades: Trade[];
   compact?: boolean;
   onViewTrade?: (id: string) => void;
+  /** Called when a trade is optimistically deleted (for undo) */
+  onDeleteOptimistic?: (tradeId: string) => void;
+  /** Called when Undo is clicked to restore the trade */
+  onUndoOptimistic?: (tradeId: string) => void;
 }) {
   return (
     <Table>
@@ -38,7 +45,7 @@ export function TradesTable({
           <TableHead>Symbol</TableHead>
           <TableHead>Side</TableHead>
           <TableHead className="text-right">R/R</TableHead>
-          <TableHead className="text-right">P&amp;L</TableHead>
+          <TableHead className="text-right">P&L</TableHead>
           {!compact ? <TableHead className="w-12 text-right">Action</TableHead> : null}
         </TableRow>
       </TableHeader>
@@ -51,7 +58,7 @@ export function TradesTable({
             <TableRow
               key={trade.id}
               className={cn(
-                "cursor-pointer border-zinc-800 transition-colors hover:bg-zinc-900/80",
+                "group cursor-pointer border-zinc-800 transition-all hover:bg-zinc-900/80 hover:shadow-[inset_2px_0_0_0_rgb(16_185_129)]",
                 index % 2 === 1 && "bg-zinc-900/30"
               )}
               onClick={() => onViewTrade?.(trade.id)}
@@ -87,12 +94,17 @@ export function TradesTable({
                 ) : (
                   <span
                     className={cn(
-                      "font-mono text-sm font-medium",
+                      "inline-flex items-center gap-1.5 font-mono text-sm font-medium",
                       pnl > 0 && "text-emerald-400",
                       pnl < 0 && "text-rose-400",
                       pnl === 0 && "text-zinc-400"
                     )}
                   >
+                    {pnl > 0 ? (
+                      <TrendingUp className="h-3.5 w-3.5" aria-hidden="true" />
+                    ) : pnl < 0 ? (
+                      <TrendingDown className="h-3.5 w-3.5" aria-hidden="true" />
+                    ) : null}
                     {formatSignedCurrency(pnl)}
                   </span>
                 )}
@@ -102,11 +114,23 @@ export function TradesTable({
                   className="text-right"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <TradeRowActions
-                    tradeId={trade.id}
-                  />
+                  <div className="flex items-center justify-end gap-1">
+                    <ArrowRight className="h-3.5 w-3.5 text-zinc-600 opacity-0 transition-opacity group-hover:opacity-100" aria-hidden="true" />
+                    <TradeRowActions
+                      tradeId={trade.id}
+                      onDeleteOptimistic={() => onDeleteOptimistic?.(trade.id)}
+                      onUndoOptimistic={() => onUndoOptimistic?.(trade.id)}
+                    />
+                  </div>
                 </TableCell>
-              ) : null}
+              ) : (
+                <TableCell
+                  className="w-8 text-right"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <ArrowRight className="ml-auto h-3.5 w-3.5 text-zinc-600 opacity-0 transition-opacity group-hover:opacity-100" aria-hidden="true" />
+                </TableCell>
+              )}
             </TableRow>
           );
         })}

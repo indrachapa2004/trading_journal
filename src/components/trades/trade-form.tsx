@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { AlertCircle } from "lucide-react";
 
 import {
   createTrade,
@@ -18,6 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 import type { Trade } from "@/types/database";
 
 const selectClassName =
@@ -27,6 +29,8 @@ type TradeFormProps = {
   trade?: Trade;
 };
 
+type FieldErrors = Record<string, string>;
+
 function toLocalInputValue(iso: string | null | undefined) {
   if (!iso) return "";
   const date = new Date(iso);
@@ -35,13 +39,132 @@ function toLocalInputValue(iso: string | null | undefined) {
   return local.toISOString().slice(0, 16);
 }
 
+function validateField(name: string, value: string): string | null {
+  switch (name) {
+    case "symbol": {
+      const trimmed = value.trim();
+      if (!trimmed) return "Symbol is required";
+      if (trimmed.length > 20) return "Symbol must be 20 characters or less";
+      return null;
+    }
+    case "quantity": {
+      const num = Number(value);
+      if (!value || isNaN(num)) return "Quantity is required";
+      if (num <= 0) return "Quantity must be positive";
+      return null;
+    }
+    case "entry_price": {
+      const num = Number(value);
+      if (!value || isNaN(num)) return "Entry price is required";
+      if (num <= 0) return "Entry price must be positive";
+      return null;
+    }
+    case "exit_price": {
+      if (!value) return null;
+      const num = Number(value);
+      if (isNaN(num) || num <= 0) return "Exit price must be positive";
+      return null;
+    }
+    case "fees": {
+      const num = Number(value);
+      if (isNaN(num) || num < 0) return "Fees cannot be negative";
+      return null;
+    }
+    case "stop_loss": {
+      if (!value) return null;
+      const num = Number(value);
+      if (isNaN(num) || num <= 0) return "Stop loss must be positive";
+      return null;
+    }
+    case "take_profit": {
+      if (!value) return null;
+      const num = Number(value);
+      if (isNaN(num) || num <= 0) return "Take profit must be positive";
+      return null;
+    }
+    default:
+      return null;
+  }
+}
+
+const VALIDATION_FIELDS = [
+  "symbol",
+  "quantity",
+  "entry_price",
+  "exit_price",
+  "fees",
+  "stop_loss",
+  "take_profit",
+];
+
+type FormValues = Record<string, string>;
+
+function ErrorLabel({ message }: { message: string | undefined }) {
+  if (!message) return null;
+  return (
+    <span className="flex items-center gap-1 text-xs text-rose-400">
+      <AlertCircle className="h-3 w-3" />
+      {message}
+    </span>
+  );
+}
+
 export function TradeForm({ trade }: TradeFormProps) {
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [isPending, startTransition] = useTransition();
   const isEditing = Boolean(trade);
 
-  function handleSubmit(formData: FormData) {
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
+    const { name, value } = e.target;
+    if (!VALIDATION_FIELDS.includes(name)) return;
+    const errorMsg = validateField(name, value);
+    setFieldErrors((prev) => {
+      const next = { ...prev };
+      if (errorMsg) {
+        next[name] = errorMsg;
+      } else {
+        delete next[name];
+      }
+      return next;
+    });
+  }
+
+  function handleBlur(e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
+    const { name, value } = e.target;
+    if (!VALIDATION_FIELDS.includes(name)) return;
+    const errorMsg = validateField(name, value);
+    setFieldErrors((prev) => {
+      const next = { ...prev };
+      if (errorMsg) {
+        next[name] = errorMsg;
+      } else {
+        delete next[name];
+      }
+      return next;
+    });
+  }
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
     setError(null);
+
+    const formData = new FormData(e.currentTarget);
+
+    // Validate all fields before submit
+    const newErrors: FieldErrors = {};
+    for (const fieldName of VALIDATION_FIELDS) {
+      const value = formData.get(fieldName)?.toString() ?? "";
+      const errorMsg = validateField(fieldName, value);
+      if (errorMsg) {
+        newErrors[fieldName] = errorMsg;
+      }
+    }
+    setFieldErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) {
+      return;
+    }
+
     startTransition(async () => {
       const result = trade
         ? await updateTrade(trade.id, formData)
@@ -51,6 +174,30 @@ export function TradeForm({ trade }: TradeFormProps) {
         setError(result.error);
       }
     });
+  }
+
+  function inputError(name: string): string | undefined {
+    return fieldErrors[name];
+  }
+
+  function inputClass(name: string, extra = ""): string {
+    return cn(
+      "border-zinc-700 bg-zinc-950 font-mono",
+      inputError(name) && "border-rose-500/50 ring-1 ring-rose-500/20",
+      extra
+    );
+  }
+
+  function renderField(label: string, name: string, input: React.ReactNode) {
+    return (
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <Label htmlFor={name} className="text-zinc-300">{label}</Label>
+          <ErrorLabel message={inputError(name)} />
+        </div>
+        {input}
+      </div>
+    );
   }
 
   return (
@@ -66,19 +213,20 @@ export function TradeForm({ trade }: TradeFormProps) {
         </CardDescription>
       </CardHeader>
       <CardContent className="p-6 pt-0">
-        <form action={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid gap-6 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="symbol" className="text-zinc-300">Symbol</Label>
+            {renderField("Symbol", "symbol",
               <Input
                 id="symbol"
                 name="symbol"
                 placeholder="AAPL"
                 defaultValue={trade?.symbol}
                 required
-                className="border-zinc-700 bg-zinc-950 font-mono"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className={inputClass("symbol")}
               />
-            </div>
+            )}
             <div className="space-y-2">
               <Label htmlFor="asset_class" className="text-zinc-300">Asset class</Label>
               <select
@@ -86,6 +234,7 @@ export function TradeForm({ trade }: TradeFormProps) {
                 name="asset_class"
                 className={selectClassName}
                 defaultValue={trade?.asset_class ?? "stocks"}
+                onChange={handleChange}
               >
                 <option value="stocks">Stocks</option>
                 <option value="forex">Forex</option>
@@ -106,8 +255,7 @@ export function TradeForm({ trade }: TradeFormProps) {
                 <option value="short">Short</option>
               </select>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="quantity" className="text-zinc-300">Quantity</Label>
+            {renderField("Quantity", "quantity",
               <Input
                 id="quantity"
                 name="quantity"
@@ -116,11 +264,12 @@ export function TradeForm({ trade }: TradeFormProps) {
                 min="0"
                 defaultValue={trade?.quantity}
                 required
-                className="border-zinc-700 bg-zinc-950 font-mono"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className={inputClass("quantity")}
               />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="entry_price" className="text-zinc-300">Entry price</Label>
+            )}
+            {renderField("Entry price", "entry_price",
               <Input
                 id="entry_price"
                 name="entry_price"
@@ -129,11 +278,12 @@ export function TradeForm({ trade }: TradeFormProps) {
                 min="0"
                 defaultValue={trade?.entry_price}
                 required
-                className="border-zinc-700 bg-zinc-950 font-mono"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className={inputClass("entry_price")}
               />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="exit_price" className="text-zinc-300">Exit price</Label>
+            )}
+            {renderField("Exit price", "exit_price",
               <Input
                 id="exit_price"
                 name="exit_price"
@@ -141,9 +291,11 @@ export function TradeForm({ trade }: TradeFormProps) {
                 step="any"
                 min="0"
                 defaultValue={trade?.exit_price ?? ""}
-                className="border-zinc-700 bg-zinc-950 font-mono"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className={inputClass("exit_price")}
               />
-            </div>
+            )}
             <div className="space-y-2">
               <Label htmlFor="entry_at" className="text-zinc-300">Entry time</Label>
               <Input
@@ -165,8 +317,7 @@ export function TradeForm({ trade }: TradeFormProps) {
                 className="border-zinc-700 bg-zinc-950 font-mono"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="stop_loss" className="text-zinc-300">Stop loss</Label>
+            {renderField("Stop loss", "stop_loss",
               <Input
                 id="stop_loss"
                 name="stop_loss"
@@ -174,11 +325,12 @@ export function TradeForm({ trade }: TradeFormProps) {
                 step="any"
                 min="0"
                 defaultValue={trade?.stop_loss ?? ""}
-                className="border-zinc-700 bg-zinc-950 font-mono"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className={inputClass("stop_loss")}
               />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="take_profit" className="text-zinc-300">Take profit</Label>
+            )}
+            {renderField("Take profit", "take_profit",
               <Input
                 id="take_profit"
                 name="take_profit"
@@ -186,11 +338,12 @@ export function TradeForm({ trade }: TradeFormProps) {
                 step="any"
                 min="0"
                 defaultValue={trade?.take_profit ?? ""}
-                className="border-zinc-700 bg-zinc-950 font-mono"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className={inputClass("take_profit")}
               />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="fees" className="text-zinc-300">Fees / commission</Label>
+            )}
+            {renderField("Fees / commission", "fees",
               <Input
                 id="fees"
                 name="fees"
@@ -198,9 +351,11 @@ export function TradeForm({ trade }: TradeFormProps) {
                 step="any"
                 min="0"
                 defaultValue={trade?.fees ?? 0}
-                className="border-zinc-700 bg-zinc-950 font-mono"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className={inputClass("fees")}
               />
-            </div>
+            )}
             <div className="space-y-2 sm:col-span-2">
               <Label htmlFor="tags" className="text-zinc-300">Tags</Label>
               <Input

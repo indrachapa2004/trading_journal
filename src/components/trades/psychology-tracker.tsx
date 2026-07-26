@@ -2,7 +2,7 @@
 
 import { Star } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 
 import { updateTradePsychology } from "@/app/(dashboard)/trades/actions";
 import { Badge } from "@/components/ui/badge";
@@ -40,12 +40,41 @@ export function PsychologyTracker({
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+  const saveBarRef = useRef<HTMLDivElement>(null);
 
   const isDirty =
     JSON.stringify([...mistakes].sort()) !==
       JSON.stringify([...initialMistakes].sort()) ||
     selfRating !== initialSelfRating ||
     emotion !== initialEmotion;
+
+  // Warn on unsaved changes when leaving the page
+  useEffect(() => {
+    if (!isDirty) return;
+
+    function handleBeforeUnload(e: BeforeUnloadEvent) {
+      e.preventDefault();
+      e.returnValue = "";
+    }
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isDirty]);
+
+  // Keyboard shortcut: Ctrl+S to save
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+        e.preventDefault();
+        if (isDirty && !isPending) {
+          handleSave();
+        }
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isDirty, isPending, mistakes, selfRating, emotion]);
 
   function toggleMistake(value: TradeMistake) {
     setMistakes((current) =>
@@ -80,6 +109,34 @@ export function PsychologyTracker({
 
   return (
     <div className="space-y-6">
+      {/* Sticky save bar */}
+      {isDirty ? (
+        <div
+          ref={saveBarRef}
+          className="sticky top-0 z-10 -mx-2 rounded-lg border border-emerald-500/20 bg-zinc-900/95 px-4 py-3 backdrop-blur-md"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="flex h-2 w-2 rounded-full bg-emerald-500" />
+              <span className="text-sm text-zinc-300">Unsaved changes</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="hidden text-xs text-zinc-500 sm:inline">
+                Ctrl+S to save
+              </span>
+              <Button
+                type="button"
+                size="sm"
+                onClick={handleSave}
+                disabled={isPending}
+              >
+                {isPending ? "Saving..." : "Save"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
       <FieldGroup>
         <Field>
           <FieldLabel className="text-zinc-300">Emotional state</FieldLabel>
