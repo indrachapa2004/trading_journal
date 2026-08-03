@@ -15,6 +15,9 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Tradventure",
   description: "Track trades, analyze performance, and improve your edge.",
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
