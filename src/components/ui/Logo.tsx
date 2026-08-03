@@ -2,10 +2,11 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { cn } from "@/lib/utils";
 
-export const Logo = () => {
+export const Logo = ({ className }: { className?: string }) => {
   return (
-    <Link href="/" className="flex items-center gap-4 group no-underline">
+    <Link href="/" className={cn("flex items-center gap-4 group no-underline", className)}>
       {/* The Centered Tile */}
       <div className="flex items-center justify-center w-12 h-12 bg-[#0B0B0B] border border-white/5 rounded-[14px] shadow-2xl transition-transform duration-300 group-hover:scale-105">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 drop-shadow-[0_0_12px_rgba(16,185,129,0.4)]">

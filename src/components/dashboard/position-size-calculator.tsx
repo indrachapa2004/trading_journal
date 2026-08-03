@@ -52,7 +52,7 @@ export function PositionSizeCalculator({
               type="number"
               step="any"
               value={balance}
-              onValueChange={setBalance}
+              onChange={(e) => setBalance(e.target.value)}
               className="border-zinc-700 bg-zinc-950 font-mono tabular-nums"
             />
           </div>
@@ -62,7 +62,7 @@ export function PositionSizeCalculator({
               type="number"
               step="0.1"
               value={riskPercent}
-              onValueChange={setRiskPercent}
+              onChange={(e) => setRiskPercent(e.target.value)}
               className="border-zinc-700 bg-zinc-950 font-mono tabular-nums"
             />
           </div>
@@ -72,7 +72,7 @@ export function PositionSizeCalculator({
               type="number"
               step="any"
               value={entry}
-              onValueChange={setEntry}
+              onChange={(e) => setEntry(e.target.value)}
               className="border-zinc-700 bg-zinc-950 font-mono tabular-nums"
             />
           </div>
@@ -82,7 +82,7 @@ export function PositionSizeCalculator({
               type="number"
               step="any"
               value={stopLoss}
-              onValueChange={setStopLoss}
+              onChange={(e) => setStopLoss(e.target.value)}
               className="border-zinc-700 bg-zinc-950 font-mono tabular-nums"
             />
           </div>

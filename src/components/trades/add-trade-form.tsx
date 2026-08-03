@@ -149,7 +149,7 @@ function FormTextInput({
       name={name}
       value={value}
       onBlur={onBlur}
-      onValueChange={onChange}
+      onChange={(e) => onChange(e.target.value)}
       aria-invalid={!!error}
       className="border-zinc-700 bg-zinc-950 font-mono"
     />
