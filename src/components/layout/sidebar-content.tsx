@@ -1,9 +1,8 @@
-import { TrendingUp } from "lucide-react";
-
 import { AccountSwitcher } from "@/components/layout/account-switcher";
 import { Logo } from "@/components/ui/Logo";
 import { SidebarNav } from "@/components/layout/sidebar-nav";
 import { SidebarUser } from "@/components/layout/sidebar-user";
+import { SupportButton } from "@/components/layout/support-button";
 import { cn } from "@/lib/utils";
 import type { Account } from "@/types/database";
 
@@ -36,7 +35,11 @@ export function SidebarContent({
         <SidebarNav onNavigate={onNavigate} />
       </div>
 
-      <div className="shrink-0">
+      <div className="shrink-0 px-4">
+        <SupportButton />
+      </div>
+
+      <div className="shrink-0 mt-4">
         <SidebarUser email={email} />
       </div>
     </div>
