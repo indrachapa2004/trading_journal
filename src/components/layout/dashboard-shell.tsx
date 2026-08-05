@@ -1,5 +1,6 @@
 import { MobileSidebar } from "@/components/layout/mobile-sidebar";
 import { AppSidebar } from "@/components/layout/app-sidebar";
+import { DevelopmentNotice } from "@/components/layout/development-notice";
 import type { Account } from "@/types/database";
 
 type DashboardShellProps = {
@@ -30,6 +31,8 @@ export function DashboardShell({
           accounts={accounts}
           activeAccount={activeAccount}
         />
+
+        <DevelopmentNotice userEmail={userEmail} />
 
         <main className="min-h-0 flex-1 overflow-y-auto bg-zinc-950">
           <div className="mx-auto max-w-7xl p-8 lg:p-10">{children}</div>

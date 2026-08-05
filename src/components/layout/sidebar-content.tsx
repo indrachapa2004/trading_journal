@@ -24,7 +24,7 @@ export function SidebarContent({
   return (
     <div className={cn("flex h-full min-h-0 flex-col bg-zinc-950", className)}>
       <div className="flex h-14 shrink-0 items-center border-b border-zinc-800 px-2">
-        <Logo className="scale-50 -ml-2" />
+        <Logo className="-ml-1" />
       </div>
 
       <div className="shrink-0 space-y-4 px-4 py-4">
