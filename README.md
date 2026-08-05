@@ -2,6 +2,8 @@
 
 A personal trading journal built with **Next.js 14**, **Supabase**, **shadcn/ui**, and **Recharts**.
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/S3C524GU5E)
+
 ## Features
 
 - Email/password authentication (Supabase Auth)
