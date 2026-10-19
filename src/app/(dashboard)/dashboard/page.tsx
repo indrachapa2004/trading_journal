@@ -63,8 +63,8 @@ export default async function DashboardPage() {
         <SummaryRibbon stats={stats} />
         <AdvancedStatsRibbon stats={advanced} currency={currency} />
 
-        <div className="grid grid-cols-1 items-start gap-6 xl:grid-cols-12">
-          <div className="min-w-0 xl:col-span-8">
+        <div className="grid grid-cols-1 gap-6 xl:grid-cols-12">
+          <div className="flex min-w-0 xl:col-span-8">
             <EquityCurve />
           </div>
 

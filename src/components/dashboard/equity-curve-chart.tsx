@@ -70,7 +70,7 @@ export function EquityCurveChart({ data }: { data: EquityPoint[] }) {
             </p>
           </div>
         ) : (
-          <div className="relative mt-6 min-h-[400px] flex-1 w-full overflow-hidden">
+          <div className="relative mt-6 min-h-[400px] w-full flex-1 overflow-hidden">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
                 data={data}

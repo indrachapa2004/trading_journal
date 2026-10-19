@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -55,6 +55,7 @@ export function MarkdownNotes({
   readOnly?: boolean;
 }) {
   const [preview, setPreview] = useState(false);
+  const textareaId = useId();
 
   if (readOnly) {
     return (
@@ -72,7 +73,16 @@ export function MarkdownNotes({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <p className="text-sm font-medium text-zinc-300">{label}</p>
+        {preview ? (
+          <p className="text-sm font-medium text-zinc-300">{label}</p>
+        ) : (
+          <label
+            htmlFor={textareaId}
+            className="text-sm font-medium text-zinc-300"
+          >
+            {label}
+          </label>
+        )}
         <Button
           type="button"
           variant="ghost"
@@ -95,6 +105,7 @@ export function MarkdownNotes({
         </div>
       ) : (
         <Textarea
+          id={textareaId}
           value={value}
           onChange={(e) => onChange?.(e.target.value)}
           rows={5}

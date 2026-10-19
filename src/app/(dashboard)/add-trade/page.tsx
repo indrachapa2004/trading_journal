@@ -1,34 +1,21 @@
 import { AddTradeForm } from "@/components/trades/add-trade-form";
+import { PageHeader } from "@/components/layout/page-header";
 import { getTradingRules } from "@/lib/data/accounts";
-
-import { ArrowLeft } from "lucide-react";
-
 import { LinkButton } from "@/components/ui/link-button";
 
 export default async function AddTradePage() {
   const rules = await getTradingRules();
 
   return (
-    <div className="mx-auto max-w-4xl p-6 lg:p-10">
-      <div className="mb-6 space-y-4">
-        <LinkButton
-          href="/trades"
-          variant="ghost"
-          size="sm"
-          className="-ml-2 text-zinc-400"
-        >
-          <ArrowLeft className="size-4" />
-          Back
+    <div className="mx-auto max-w-6xl space-y-8">
+      <PageHeader
+        title="Log a trade"
+        description="Capture the execution, risk, and decisions behind this trade."
+      >
+        <LinkButton href="/trades" variant="outline">
+          Cancel
         </LinkButton>
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-100">
-            Add trade
-          </h1>
-          <p className="text-sm text-zinc-500">
-            Record a new trade in your journal.
-          </p>
-        </div>
-      </div>
+      </PageHeader>
       <AddTradeForm rules={rules} />
     </div>
   );

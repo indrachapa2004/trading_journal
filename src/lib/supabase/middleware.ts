@@ -35,12 +35,15 @@ export async function updateSession(request: NextRequest) {
   const isAuthRoute =
     request.nextUrl.pathname.startsWith("/login") ||
     request.nextUrl.pathname.startsWith("/signup");
+  const isAnalyticsPreviewRoute =
+    request.nextUrl.pathname === "/analytics-preview";
   const isProtectedRoute =
     request.nextUrl.pathname.startsWith("/dashboard") ||
     request.nextUrl.pathname.startsWith("/onboarding") ||
     request.nextUrl.pathname.startsWith("/trades") ||
     request.nextUrl.pathname.startsWith("/add-trade") ||
-    request.nextUrl.pathname.startsWith("/analytics") ||
+    (request.nextUrl.pathname.startsWith("/analytics") &&
+      !isAnalyticsPreviewRoute) ||
     request.nextUrl.pathname.startsWith("/calendar") ||
     request.nextUrl.pathname.startsWith("/settings") ||
     request.nextUrl.pathname.startsWith("/reports");

@@ -56,7 +56,8 @@ export function BreakdownChart({
                   type="category"
                   dataKey="label"
                   tick={{ fill: "#a1a1aa", fontSize: 11 }}
-                  width={72}
+                  interval={0}
+                  width={112}
                   axisLine={false}
                   tickLine={false}
                 />
@@ -66,6 +67,7 @@ export function BreakdownChart({
                     border: "1px solid #3f3f46",
                     borderRadius: 8,
                   }}
+                  itemStyle={{ color: "#e4e4e7" }}
                   formatter={(value) => [
                     formatCurrency(Number(value ?? 0)),
                     "P&L",
