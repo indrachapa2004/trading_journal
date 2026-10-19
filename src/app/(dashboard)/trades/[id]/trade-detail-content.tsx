@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { TrendingDown, TrendingUp, ChevronLeft } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 
 import { TradeDeleteButton } from "@/components/trades/trade-delete-button";
 import { PsychologyTracker } from "@/components/trades/psychology-tracker";
@@ -17,7 +17,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { calculatePnl, formatCurrency, formatSignedCurrency } from "@/lib/trades";
+import { formatCurrency, formatSignedCurrency } from "@/lib/trades";
 import { cn } from "@/lib/utils";
 import type { Trade, TradeScreenshot } from "@/types/database";
 

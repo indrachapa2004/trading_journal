@@ -2,9 +2,6 @@ import { notFound } from "next/navigation";
 import { getTradeById, getTradeScreenshots } from "@/lib/data/trades";
 import { calculatePnl } from "@/lib/trades";
 import { TradeDetailPageContent } from "./trade-detail-content";
-import type { Trade, TradeScreenshot } from "@/types/database";
-
-type ScreenshotWithUrl = TradeScreenshot & { url: string };
 
 export default async function TradeDetailPage({
   params,

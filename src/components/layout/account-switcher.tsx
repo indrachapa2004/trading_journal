@@ -40,7 +40,7 @@ export function AccountSwitcher({
         disabled={isPending}
         className={cn(
           buttonVariants({ variant: "outline", size: "sm" }),
-          "w-full justify-between border-zinc-700 bg-zinc-900/50 text-zinc-100 hover:bg-zinc-800"
+          "w-full justify-between border-white/10 bg-white/[0.04] text-zinc-100 hover:bg-white/[0.07]"
         )}
       >
         <span className="flex items-center gap-2 truncate">
@@ -51,14 +51,14 @@ export function AccountSwitcher({
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="start"
-        className="w-[var(--anchor-width)] border-zinc-700 bg-zinc-900"
+        className="w-[var(--anchor-width)] border-white/10 bg-[#19211a]"
       >
         {accounts.map((account) => (
           <DropdownMenuItem
             key={account.id}
             onClick={() => handleSwitch(account.id)}
             className={cn(
-              account.id === activeAccount?.id && "bg-zinc-800 text-emerald-400"
+              account.id === activeAccount?.id && "bg-emerald-400/10 text-emerald-200"
             )}
           >
             <span className="truncate">{account.name}</span>

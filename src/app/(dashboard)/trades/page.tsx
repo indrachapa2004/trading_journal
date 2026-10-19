@@ -1,4 +1,3 @@
-import { FileSpreadsheet } from "lucide-react";
 import { CsvImport } from "@/components/trades/csv-import";
 import { ExportTradesButton } from "@/components/trades/export-trades-button";
 import { TradesTableWithFilters } from "@/components/trades/trades-table-with-filters";

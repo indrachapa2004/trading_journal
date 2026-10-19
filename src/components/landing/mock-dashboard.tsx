@@ -4,6 +4,7 @@ import { useId } from "react";
 import {
   Area,
   AreaChart,
+  CartesianGrid,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -11,10 +12,9 @@ import {
 } from "recharts";
 import { TrendingUp } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
-const EMERALD = "#22c55e";
+const chartColor = "#83b995";
 
 const mockEquity = [
   { label: "Jan", balance: 10200 },
@@ -27,10 +27,10 @@ const mockEquity = [
   { label: "Aug", balance: 14200 },
 ];
 
-const miniStats = [
-  { label: "Net P&L", value: "+$4,200", accent: "text-green-400" },
-  { label: "Win rate", value: "62.4%", accent: "text-zinc-100" },
-  { label: "Profit factor", value: "2.18", accent: "text-zinc-100" },
+const metrics = [
+  { label: "Net P&L", value: "+$4,200", className: "text-emerald-300" },
+  { label: "Win rate", value: "62.4%" },
+  { label: "Profit factor", value: "2.18" },
 ];
 
 function formatUsd(value: number) {
@@ -41,69 +41,53 @@ function formatUsd(value: number) {
   }).format(value);
 }
 
-function MacWindowControls() {
-  return (
-    <div className="flex items-center gap-1.5" aria-hidden>
-      <span className="size-2.5 rounded-full bg-[#ff5f57] ring-1 ring-black/20" />
-      <span className="size-2.5 rounded-full bg-[#febc2e] ring-1 ring-black/20" />
-      <span className="size-2.5 rounded-full bg-[#28c840] ring-1 ring-black/20" />
-    </div>
-  );
-}
-
 export function MockDashboard({ className }: { className?: string }) {
   const gradientId = useId().replace(/:/g, "");
 
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-xl border border-slate-700/60 bg-[#0e1223]/90 shadow-lg shadow-black/20 backdrop-blur-md",
+        "overflow-hidden rounded-lg border border-white/10 bg-[#151b16]",
         className
       )}
     >
-      {/* Title bar */}
-      <div className="flex items-center gap-3 border-b border-white/5 px-4 py-3">
-        <MacWindowControls />
-        <div className="flex min-w-0 flex-1 items-center gap-2">
-          <div className="flex size-6 shrink-0 items-center justify-center rounded-md bg-zinc-800/80">
-            <TrendingUp className="size-3 text-green-400" />
-          </div>
-          <span className="truncate text-sm font-medium text-zinc-300">
-            Performance overview
-          </span>
-        </div>
-        <Badge
-          variant="outline"
-          className="shrink-0 border-green-500/20 bg-green-500/5 text-[10px] text-green-300"
-        >
-          Sample
-        </Badge>
+      <div className="flex items-center gap-3 border-b border-white/10 px-4 py-3">
+        <TrendingUp className="size-4 text-emerald-300" aria-hidden="true" />
+        <span className="min-w-0 flex-1 truncate text-sm font-medium text-zinc-200">
+          Portfolio overview
+        </span>
+        <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">
+          Preview
+        </span>
       </div>
 
-      <div className="grid gap-3 p-4 sm:grid-cols-3">
-        {miniStats.map((stat) => (
+      <dl className="grid grid-cols-3 border-b border-white/10">
+        {metrics.map((metric, index) => (
           <div
-            key={stat.label}
-            className="rounded-lg border border-white/5 bg-zinc-950/40 px-3 py-2.5 backdrop-blur-sm"
+            key={metric.label}
+            className={cn(
+              "min-w-0 px-3 py-3 sm:px-5 sm:py-4",
+              index > 0 && "border-l border-white/10"
+            )}
           >
-            <p className="text-[10px] font-medium uppercase tracking-wider text-slate-400">
-              {stat.label}
-            </p>
-            <p
+            <dt className="truncate text-[10px] font-medium uppercase tracking-wider text-zinc-500">
+              {metric.label}
+            </dt>
+            <dd
               className={cn(
-                "mt-0.5 font-mono text-lg font-semibold tabular-nums",
-                stat.accent
+                "mt-1 truncate font-mono text-base font-medium tabular-nums text-zinc-100 sm:text-lg",
+                metric.className
               )}
             >
-              {stat.value}
-            </p>
+              {metric.value}
+            </dd>
           </div>
         ))}
-      </div>
+      </dl>
 
-      <div className="border-t border-white/5 px-4 pb-4 pt-3">
-        <p className="mb-2 text-xs font-medium text-slate-400">Equity curve</p>
-        <div className="h-[180px] w-full sm:h-[220px]">
+      <div className="px-4 pb-3 pt-4 sm:px-5">
+        <p className="mb-2 text-xs font-medium text-zinc-400">Equity curve</p>
+        <div className="h-[160px] w-full sm:h-[200px]">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
               data={mockEquity}
@@ -111,42 +95,46 @@ export function MockDashboard({ className }: { className?: string }) {
             >
               <defs>
                 <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor={EMERALD} stopOpacity={0.25} />
-                  <stop offset="100%" stopColor={EMERALD} stopOpacity={0} />
+                  <stop offset="0%" stopColor={chartColor} stopOpacity={0.2} />
+                  <stop offset="100%" stopColor={chartColor} stopOpacity={0} />
                 </linearGradient>
               </defs>
+              <CartesianGrid
+                vertical={false}
+                stroke="rgba(255,255,255,0.06)"
+                strokeDasharray="2 4"
+              />
               <XAxis
                 dataKey="label"
-                tick={{ fontSize: 10, fill: "#94a3b8" }}
+                tick={{ fontSize: 10, fill: "#8d988e" }}
                 axisLine={false}
                 tickLine={false}
               />
               <YAxis
-                tick={{ fontSize: 10, fill: "#94a3b8" }}
-                tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
+                tick={{ fontSize: 10, fill: "#8d988e" }}
+                tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
                 axisLine={false}
                 tickLine={false}
                 width={40}
               />
               <Tooltip
                 contentStyle={{
-                  background: "rgba(24, 24, 27, 0.85)",
-                  border: "1px solid rgba(255,255,255,0.08)",
-                  borderRadius: 8,
+                  background: "#1b241d",
+                  border: "1px solid rgba(255,255,255,0.12)",
+                  borderRadius: 6,
                   fontSize: 12,
-                  backdropFilter: "blur(8px)",
                 }}
                 formatter={(value) => [formatUsd(Number(value)), "Balance"]}
-                cursor={{ stroke: EMERALD, strokeWidth: 1, strokeOpacity: 0.2 }}
+                cursor={{ stroke: chartColor, strokeWidth: 1, strokeOpacity: 0.25 }}
               />
               <Area
                 type="monotone"
                 dataKey="balance"
-                stroke={EMERALD}
+                stroke={chartColor}
                 strokeWidth={1.5}
                 fill={`url(#${gradientId})`}
                 dot={false}
-                activeDot={{ r: 3, fill: EMERALD, strokeWidth: 0 }}
+                activeDot={{ r: 3, fill: chartColor, strokeWidth: 0 }}
               />
             </AreaChart>
           </ResponsiveContainer>

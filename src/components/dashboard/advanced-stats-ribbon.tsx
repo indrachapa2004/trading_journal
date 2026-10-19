@@ -1,12 +1,7 @@
-import { Card } from "@/components/ui/card";
 import type { AdvancedStats } from "@/lib/analytics";
 import { formatDuration } from "@/lib/analytics";
-import {
-  formatCurrency,
-  formatPercent,
-  formatProfitFactor,
-} from "@/lib/trades";
-import { sectionLabel, terminalCardCompact } from "@/lib/ui-classes";
+import { formatCurrency } from "@/lib/trades";
+import { sectionLabel } from "@/lib/ui-classes";
 import { cn } from "@/lib/utils";
 
 export function AdvancedStatsRibbon({
@@ -20,10 +15,6 @@ export function AdvancedStatsRibbon({
     {
       label: "Sharpe ratio",
       value: stats.sharpeRatio.toFixed(2),
-    },
-    {
-      label: "Profit factor",
-      value: formatProfitFactor(stats.profitFactor),
     },
     {
       label: "Max drawdown",
@@ -44,30 +35,26 @@ export function AdvancedStatsRibbon({
       label: "Avg duration",
       value: formatDuration(stats.avgTradeDurationHours),
     },
-    {
-      label: "Win rate",
-      value: formatPercent(stats.winRate),
-    },
   ];
 
   return (
     <div className="space-y-4">
       <p className={sectionLabel}>Advanced metrics</p>
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 2xl:grid-cols-6">
+      <dl className="grid grid-cols-2 gap-x-6 gap-y-4 rounded-lg border border-white/10 bg-[#151b16] p-4 sm:grid-cols-2 lg:grid-cols-4">
         {items.map((item) => (
-          <Card key={item.label} className={cn(terminalCardCompact, "min-w-0 p-4")}>
-            <p className={sectionLabel}>{item.label}</p>
-            <p
+          <div key={item.label} className="min-w-0">
+            <dt className={cn(sectionLabel, "mb-1")}>{item.label}</dt>
+            <dd
               className={cn(
                 "text-sm font-semibold tracking-tight font-mono tabular-nums text-zinc-300 sm:text-base",
                 item.className
               )}
             >
               {item.value}
-            </p>
-          </Card>
+            </dd>
+          </div>
         ))}
-      </div>
+      </dl>
     </div>
   );
 }

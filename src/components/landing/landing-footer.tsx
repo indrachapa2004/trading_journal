@@ -1,89 +1,102 @@
-import Link from "next/link";
-import { ExternalLink } from "lucide-react";
+"use client";
 
-const footerLinks = {
-  product: [
-    { label: "Features", href: "#features" },
-    { label: "Demo", href: "#demo" },
-    { label: "Pricing", href: "#pricing" },
-  ],
-  legal: [
-    { label: "Privacy", href: "#" },
-    { label: "Terms", href: "#" },
-  ],
-};
+import Link from "next/link";
+import { LayoutGroup, motion, useReducedMotion } from "framer-motion";
+import { useState } from "react";
+
+const links = [
+  { label: "Features", href: "#features" },
+  { label: "Preview", href: "#demo" },
+  { label: "Pricing", href: "#pricing" },
+  { label: "Sign in", href: "/login" },
+];
 
 export function LandingFooter() {
+  const [hoveredItem, setHoveredItem] = useState<number | null>(null);
+  const [focusedItem, setFocusedItem] = useState<number | null>(null);
+  const prefersReducedMotion = useReducedMotion();
+  const activeItem = hoveredItem ?? focusedItem;
+
   return (
-    <footer className="border-t border-zinc-800 bg-zinc-950">
-      <div className="mx-auto max-w-6xl px-4 py-12">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="lg:col-span-2">
-            <Link href="/" className="text-lg font-semibold text-zinc-100">
-              Tradventure
-            </Link>
-            <p className="mt-3 max-w-sm text-sm text-zinc-500">
-              The data-driven journal for traders who care about psychology,
-              risk, and measurable edge.
-            </p>
-            <div className="mt-4 flex gap-3">
-              <a
-                href="https://twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-sm text-zinc-500 transition-colors hover:text-zinc-300"
-              >
-                Twitter
-                <ExternalLink className="size-3" />
-              </a>
-              <a
-                href="https://github.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-sm text-zinc-500 transition-colors hover:text-zinc-300"
-              >
-                GitHub
-                <ExternalLink className="size-3" />
-              </a>
-            </div>
-          </div>
-
-          <div>
-            <p className="text-sm font-medium text-zinc-300">Product</p>
-            <ul className="mt-3 space-y-2">
-              {footerLinks.product.map((link) => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className="text-sm text-zinc-500 transition-colors hover:text-zinc-300"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <p className="text-sm font-medium text-zinc-300">Legal</p>
-            <ul className="mt-3 space-y-2">
-              {footerLinks.legal.map((link) => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className="text-sm text-zinc-500 transition-colors hover:text-zinc-300"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+    <footer className="border-t border-white/10">
+      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8 sm:flex-row sm:items-end sm:justify-between sm:px-6">
+        <div>
+          <Link
+            href="/"
+            className="text-sm font-semibold tracking-tight text-zinc-100"
+          >
+            Tradventure
+          </Link>
+          <p className="mt-2 max-w-sm text-xs leading-5 text-zinc-500">
+            A trading journal for clearer decisions and more deliberate review.
+          </p>
         </div>
 
-        <div className="mt-10 border-t border-zinc-800 pt-6 text-center text-sm text-zinc-600">
-          © {new Date().getFullYear()} Tradventure. All rights reserved.
-        </div>
+        <nav
+          aria-label="Footer navigation"
+          onPointerLeave={(event) => {
+            if (event.pointerType === "mouse") setHoveredItem(null);
+          }}
+          onBlur={(event) => {
+            const nextTarget = event.relatedTarget;
+            if (
+              !(nextTarget instanceof Node) ||
+              !event.currentTarget.contains(nextTarget)
+            ) {
+              setFocusedItem(null);
+            }
+          }}
+        >
+          <ul className="flex flex-wrap gap-x-5 gap-y-2">
+            <LayoutGroup id="landing-footer-nav">
+              {links.map((link, index) => (
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
+                    onPointerEnter={(event) => {
+                      if (event.pointerType === "mouse") setHoveredItem(index);
+                    }}
+                    onFocus={(event) => {
+                      if (event.currentTarget.matches(":focus-visible")) {
+                        setFocusedItem(index);
+                      }
+                    }}
+                    className={`relative text-xs text-zinc-400 transition-colors hover:text-zinc-100 ${
+                      activeItem === index ? "font-medium" : ""
+                    }`}
+                  >
+                    {link.label}
+                    {activeItem === index && (
+                      <motion.span
+                        aria-hidden="true"
+                        layoutId={
+                          prefersReducedMotion
+                            ? undefined
+                            : "landing-footer-underline"
+                        }
+                        initial={prefersReducedMotion ? { opacity: 0 } : false}
+                        animate={{ opacity: 1 }}
+                        transition={{
+                          layout: {
+                            duration: 0.15,
+                            ease: [0.77, 0, 0.175, 1],
+                          },
+                          opacity: { duration: 0.1, ease: "easeOut" },
+                        }}
+                        className="pointer-events-none absolute inset-x-0 -bottom-1 h-px bg-emerald-300/60"
+                      />
+                    )}
+                  </Link>
+                </li>
+              ))}
+            </LayoutGroup>
+          </ul>
+        </nav>
+      </div>
+      <div className="border-t border-white/10">
+        <p className="mx-auto max-w-6xl px-4 py-4 text-xs text-zinc-500 sm:px-6">
+          © {new Date().getFullYear()} Tradventure
+        </p>
       </div>
     </footer>
   );
