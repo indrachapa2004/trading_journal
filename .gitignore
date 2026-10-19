@@ -30,6 +30,12 @@ yarn-error.log*
 .env.local
 .env.production
 
+# Local agent skills and MCP configuration
+/.agents/
+/.claude/
+/.grok/
+/skills-lock.json
+
 # vercel
 .vercel
 
