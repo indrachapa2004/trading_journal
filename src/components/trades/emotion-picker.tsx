@@ -12,7 +12,11 @@ export function EmotionPicker({
   onChange: (value: EmotionalState) => void;
 }) {
   return (
-    <div className="flex flex-wrap gap-2">
+  <div
+    role="group"
+    aria-label="Emotional state"
+    className="flex flex-wrap gap-2"
+  >
       {EMOTIONAL_STATES.map((emotion) => {
         const Icon = emotion.icon;
         const selected = value === emotion.value;
