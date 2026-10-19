@@ -16,7 +16,7 @@ export default async function CalendarPage() {
   const dailyPnl = computeDailyPnl(trades);
 
   return (
-    <main className={pageMain}>
+    <div className={pageMain}>
       <PageHeader
         title="Calendar"
         description="Daily P&L heatmap — emerald for profit, rose for loss"
@@ -34,6 +34,6 @@ export default async function CalendarPage() {
       ) : (
         <PnlCalendar dailyPnl={dailyPnl} trades={trades} currency={currency} />
       )}
-    </main>
+    </div>
   );
 }

@@ -30,7 +30,7 @@ export default async function AnalyticsPage() {
   const winLoss = computeWinLossDistribution(trades);
 
   return (
-    <main className={pageMain}>
+    <div className={pageMain}>
       <PageHeader
         title="Analytics"
         description="Performance breakdowns, distributions, and advanced metrics"
@@ -79,6 +79,6 @@ export default async function AnalyticsPage() {
           </div>
         </>
       )}
-    </main>
+    </div>
   );
 }
