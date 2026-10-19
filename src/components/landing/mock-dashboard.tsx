@@ -14,7 +14,7 @@ import { TrendingUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
-const EMERALD = "#10b981";
+const EMERALD = "#22c55e";
 
 const mockEquity = [
   { label: "Jan", balance: 10200 },
@@ -28,7 +28,7 @@ const mockEquity = [
 ];
 
 const miniStats = [
-  { label: "Net P&L", value: "+$4,200", accent: "text-emerald-400" },
+  { label: "Net P&L", value: "+$4,200", accent: "text-green-400" },
   { label: "Win rate", value: "62.4%", accent: "text-zinc-100" },
   { label: "Profit factor", value: "2.18", accent: "text-zinc-100" },
 ];
@@ -57,7 +57,7 @@ export function MockDashboard({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-xl border border-white/10 bg-zinc-900/50 shadow-2xl shadow-emerald-500/10 backdrop-blur-md",
+        "overflow-hidden rounded-xl border border-slate-700/60 bg-[#0e1223]/90 shadow-lg shadow-black/20 backdrop-blur-md",
         className
       )}
     >
@@ -66,7 +66,7 @@ export function MockDashboard({ className }: { className?: string }) {
         <MacWindowControls />
         <div className="flex min-w-0 flex-1 items-center gap-2">
           <div className="flex size-6 shrink-0 items-center justify-center rounded-md bg-zinc-800/80">
-            <TrendingUp className="size-3 text-emerald-400" />
+            <TrendingUp className="size-3 text-green-400" />
           </div>
           <span className="truncate text-sm font-medium text-zinc-300">
             Performance overview
@@ -74,9 +74,9 @@ export function MockDashboard({ className }: { className?: string }) {
         </div>
         <Badge
           variant="outline"
-          className="shrink-0 border-emerald-500/20 bg-emerald-500/5 text-[10px] text-emerald-400/90"
+          className="shrink-0 border-green-500/20 bg-green-500/5 text-[10px] text-green-300"
         >
-          Live
+          Sample
         </Badge>
       </div>
 
@@ -86,7 +86,7 @@ export function MockDashboard({ className }: { className?: string }) {
             key={stat.label}
             className="rounded-lg border border-white/5 bg-zinc-950/40 px-3 py-2.5 backdrop-blur-sm"
           >
-            <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">
+            <p className="text-[10px] font-medium uppercase tracking-wider text-slate-400">
               {stat.label}
             </p>
             <p
@@ -102,7 +102,7 @@ export function MockDashboard({ className }: { className?: string }) {
       </div>
 
       <div className="border-t border-white/5 px-4 pb-4 pt-3">
-        <p className="mb-2 text-xs font-medium text-zinc-500">Equity curve</p>
+        <p className="mb-2 text-xs font-medium text-slate-400">Equity curve</p>
         <div className="h-[180px] w-full sm:h-[220px]">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
@@ -117,12 +117,12 @@ export function MockDashboard({ className }: { className?: string }) {
               </defs>
               <XAxis
                 dataKey="label"
-                tick={{ fontSize: 10, fill: "#52525b" }}
+                tick={{ fontSize: 10, fill: "#94a3b8" }}
                 axisLine={false}
                 tickLine={false}
               />
               <YAxis
-                tick={{ fontSize: 10, fill: "#52525b" }}
+                tick={{ fontSize: 10, fill: "#94a3b8" }}
                 tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
                 axisLine={false}
                 tickLine={false}

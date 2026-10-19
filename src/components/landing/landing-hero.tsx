@@ -2,111 +2,101 @@
 
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
+import { MockDashboard } from "@/components/landing/mock-dashboard";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 10 },
-  visible: { opacity: 1, y: 0 },
-};
 
 export function LandingHero() {
   const prefersReducedMotion = useReducedMotion();
 
-  const container = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: prefersReducedMotion ? 0 : 0.1,
-        delayChildren: prefersReducedMotion ? 0 : 0.05,
-      },
-    },
-  };
-
-  const item = {
-    hidden: prefersReducedMotion ? { opacity: 1, y: 0 } : fadeUp.hidden,
-    visible: {
-      ...fadeUp.visible,
-      transition: { duration: 0.65, ease: "easeOut" as const },
-    },
-  };
-
   return (
-    <section className="relative overflow-hidden px-4 pb-16 pt-20 sm:pb-24 sm:pt-28">
+    <section className="relative isolate overflow-hidden border-b border-slate-800/70">
       <div
-        className="pointer-events-none absolute inset-0 z-0"
-        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        aria-hidden="true"
       >
-        <div className="hero-grid absolute inset-0" />
-        <div className="hero-spotlight absolute inset-0" />
-        <div className="absolute bottom-0 left-1/2 h-px w-[min(100%,640px)] -translate-x-1/2 bg-gradient-to-r from-transparent via-zinc-800/40 to-transparent" />
+        <div className="hero-grid absolute inset-0 opacity-70" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_80%_48%,rgba(34,197,94,0.08),transparent_42%)]" />
       </div>
 
       <motion.div
-        className="relative z-10 mx-auto max-w-3xl text-center"
-        variants={container}
-        initial="hidden"
-        animate="visible"
+        className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[0.78fr_1.22fr] lg:gap-16 lg:py-24"
+        initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          duration: prefersReducedMotion ? 0 : 0.45,
+          ease: "easeOut",
+        }}
       >
-        <motion.div variants={item}>
-          <Badge
-            variant="outline"
-            className="mb-8 border-emerald-500/30 bg-emerald-500/5 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-emerald-600"
-          >
-            <Sparkles className="size-3 text-emerald-500" />
-            Built for disciplined traders
-          </Badge>
-        </motion.div>
+        <div>
+          <p className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.2em] text-green-400">
+            <span
+              className="size-1.5 rounded-full bg-green-400"
+              aria-hidden="true"
+            />
+            Trading journal &amp; performance analytics
+          </p>
 
-        <motion.h1
-          variants={item}
-          className="hero-headline-gradient text-balance text-3xl font-bold leading-[1.2] tracking-tighter sm:text-4xl sm:leading-[1.18] md:text-5xl md:leading-[1.15]"
-        >
-          Fix your trading edge.
-        </motion.h1>
+          <h1 className="mt-7 max-w-xl text-balance text-4xl font-semibold leading-[1.08] tracking-[-0.045em] text-slate-50 sm:text-5xl lg:text-[3.75rem]">
+            Make every trade teach you{" "}
+            <span className="text-green-400">something.</span>
+          </h1>
 
-        <motion.p
-          variants={item}
-          className="mx-auto mt-7 max-w-xl text-base leading-relaxed text-zinc-400 sm:text-lg sm:leading-relaxed"
-        >
-          Most journals are spreadsheets. This is a performance lab. Track your
-          data, tag your emotions, and stop repeating the same mistakes.
-        </motion.p>
+          <p className="mt-6 max-w-lg text-base leading-7 text-slate-300 sm:text-lg sm:leading-8">
+            Log the trade. Capture your mindset. Review the patterns behind
+            your results—and build a process you can trust.
+          </p>
 
-        <motion.div
-          variants={item}
-          className="mt-14 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4"
-        >
-          <Link
-            href="/signup"
-            className={cn(
-              buttonVariants({ size: "lg" }),
-              "hero-cta-primary h-11 gap-2 rounded-lg bg-white px-7 text-sm font-medium text-zinc-950 transition-colors hover:bg-zinc-100"
-            )}
-          >
-            Start journaling for free
-            <ArrowRight className="size-4 text-zinc-700" />
-          </Link>
-          <Link
-            href="#demo"
-            className={cn(
-              buttonVariants({ variant: "outline", size: "lg" }),
-              "h-11 rounded-lg border border-zinc-800 bg-zinc-950/50 px-7 text-sm font-medium text-zinc-300 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)] transition-colors hover:border-zinc-700 hover:bg-zinc-900 hover:text-zinc-100"
-            )}
-          >
-            View live demo
-          </Link>
-        </motion.div>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Link
+              href="/signup"
+              className={cn(
+                buttonVariants({ size: "lg" }),
+                "h-11 gap-2 bg-green-500 px-5 text-slate-950 hover:bg-green-400"
+              )}
+            >
+              Start journaling for free
+              <ArrowRight className="size-4" aria-hidden="true" />
+            </Link>
+            <Link
+              href="#demo"
+              className={cn(
+                buttonVariants({ variant: "outline", size: "lg" }),
+                "h-11 border-slate-700 bg-slate-950/70 px-5 text-slate-200 hover:border-slate-600 hover:bg-slate-900"
+              )}
+            >
+              Explore the preview
+            </Link>
+          </div>
 
-        <motion.p
-          variants={item}
-          className="mt-5 text-xs tracking-wide text-zinc-600"
-        >
-          Free to start · No credit card required
-        </motion.p>
+          <p className="mt-4 text-sm text-slate-400">
+            Free to start <span aria-hidden="true">·</span> No credit card
+            required
+          </p>
+
+          <div className="mt-10 flex flex-wrap gap-x-6 gap-y-2 border-t border-slate-800/80 pt-5 text-xs font-medium uppercase tracking-[0.12em] text-slate-400">
+            <span>Trade journal</span>
+            <span>Risk review</span>
+            <span>Performance insights</span>
+          </div>
+        </div>
+
+        <div id="demo" className="min-w-0 scroll-mt-24">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <p className="text-xs font-medium uppercase tracking-[0.16em] text-slate-400">
+              Workspace preview
+            </p>
+            <p className="rounded-full border border-green-500/25 bg-green-500/10 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-green-300">
+              Sample data
+            </p>
+          </div>
+          <MockDashboard />
+          <p className="mt-3 text-right text-xs text-slate-400">
+            Illustrative account data for preview purposes.
+          </p>
+        </div>
       </motion.div>
     </section>
   );

@@ -19,8 +19,6 @@ const features = [
     title: "Numbers don't lie.",
     description:
       "Equity curves, win/loss distributions, and breakdowns by symbol, tag, and time of day.",
-    className: "lg:col-span-2 lg:row-span-2",
-    spacious: true,
   },
   {
     id: "tilt",
@@ -28,7 +26,6 @@ const features = [
     title: "Find your tilt.",
     description:
       "Log FOMO, revenge trades, and discipline. Spot emotional patterns hurting your edge.",
-    className: "lg:col-span-1",
   },
   {
     id: "vault",
@@ -36,7 +33,6 @@ const features = [
     title: "Screenshot vault",
     description:
       "Before/after chart setups stored securely — tied to every trade.",
-    className: "lg:col-span-1",
   },
   {
     id: "risk",
@@ -44,7 +40,6 @@ const features = [
     title: "Risk management",
     description:
       "Position size calculator, daily loss limits, and pre-trade rule checklists.",
-    className: "lg:col-span-1",
   },
   {
     id: "import",
@@ -52,7 +47,6 @@ const features = [
     title: "Bulk CSV import",
     description:
       "Map broker exports to your journal schema in seconds.",
-    className: "lg:col-span-1",
   },
   {
     id: "security",
@@ -60,8 +54,6 @@ const features = [
     title: "Bank-grade security",
     description:
       "Row-level security on every table. Your trades are encrypted and isolated per account.",
-    className: "lg:col-span-2",
-    spacious: true,
   },
 ];
 
@@ -80,8 +72,8 @@ function BentoArt({ id }: { id: string }) {
       {id === "analytics" && (
         <>
           {/* Deep emerald bloom behind the chart */}
-          <div className="absolute -bottom-16 left-0 right-0 h-56 rounded-[3rem] bg-emerald-500/10 blur-3xl" />
-          <div className="absolute -bottom-8 left-1/4 right-1/4 h-32 bg-emerald-400/10 blur-2xl" />
+          <div className="absolute -bottom-16 left-0 right-0 h-56 rounded-[3rem] bg-green-500/10 blur-3xl" />
+          <div className="absolute -bottom-8 left-1/4 right-1/4 h-32 bg-green-400/10 blur-2xl" />
 
           {/* Mini stat pills — upper-right */}
           <div className="absolute right-5 top-14 flex flex-col gap-1.5 opacity-30">
@@ -95,7 +87,7 @@ function BentoArt({ id }: { id: string }) {
                 className="flex items-center justify-between gap-4 rounded-lg border border-white/8 bg-zinc-800/60 px-2.5 py-1 text-[9px] backdrop-blur-sm"
               >
                 <span className="text-zinc-500">{s.label}</span>
-                <span className="font-mono font-semibold text-emerald-400">{s.val}</span>
+                <span className="font-mono font-semibold text-green-400">{s.val}</span>
               </div>
             ))}
           </div>
@@ -109,8 +101,8 @@ function BentoArt({ id }: { id: string }) {
           >
             <defs>
               <linearGradient id="art-grad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#10b981" stopOpacity="0.35" />
-                <stop offset="100%" stopColor="#10b981" stopOpacity="0" />
+                <stop offset="0%" stopColor="#22c55e" stopOpacity="0.35" />
+                <stop offset="100%" stopColor="#22c55e" stopOpacity="0" />
               </linearGradient>
             </defs>
             {/* Area fill */}
@@ -122,7 +114,7 @@ function BentoArt({ id }: { id: string }) {
             <path
               d="M0 130 C30 125, 50 90, 80 80 C110 70, 130 40, 160 30 C195 20, 220 50, 260 35 C290 24, 310 18, 320 12"
               fill="none"
-              stroke="#10b981"
+              stroke="#22c55e"
               strokeWidth="1.5"
             />
             {/* Subtle bar shadows at the bottom */}
@@ -134,7 +126,7 @@ function BentoArt({ id }: { id: string }) {
                 width="14"
                 height={60 - (i % 3) * 12}
                 rx="2"
-                fill="#10b981"
+                fill="#22c55e"
                 opacity="0.12"
               />
             ))}
@@ -154,7 +146,7 @@ function BentoArt({ id }: { id: string }) {
           </svg>
 
           {/* border-t glow line above the chart area */}
-          <div className="absolute bottom-[62%] left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
+          <div className="absolute bottom-[62%] left-0 right-0 h-px bg-gradient-to-r from-transparent via-green-500/20 to-transparent" />
         </>
       )}
 
@@ -236,51 +228,36 @@ function BentoCard({
   icon: Icon,
   title,
   description,
-  className,
-  spacious,
   index,
 }: {
   id: string;
   icon: React.ComponentType<{ className?: string }>;
   title: string;
   description: string;
-  className?: string;
-  spacious?: boolean;
   index: number;
 }) {
   return (
     <article
       className={cn(
-        "group relative rounded-2xl border border-zinc-800/25 bg-zinc-900/20 transition-colors duration-300",
-        "hover:border-zinc-800 hover:bg-zinc-900/35",
-        spacious ? "p-8 sm:p-10 lg:p-12" : "p-7 sm:p-8",
+        "group relative rounded-xl border border-slate-700/50 bg-[#0e1223]/75 backdrop-blur-sm transition-colors duration-200",
+        "hover:border-slate-600/70 hover:bg-[#11182b]/90",
+        "flex min-h-52 flex-col justify-between p-6 sm:p-7",
         "animate-in fade-in slide-in-from-bottom-3 fill-mode-both duration-700",
         index === 0 && "delay-75",
         index === 1 && "delay-100",
         index === 2 && "delay-150",
         index === 3 && "delay-200",
         index === 4 && "delay-250",
-        index === 5 && "delay-300",
-        className
+        index === 5 && "delay-300"
       )}
     >
       <BentoArt id={id} />
-      <div
-        className={cn(
-          "relative z-10 flex h-full flex-col",
-          spacious && "justify-between gap-10 lg:gap-16"
-        )}
-      >
-        <h3 className="flex items-center gap-2 text-[15px] font-medium tracking-tight text-zinc-200">
-          <Icon className="size-3.5 shrink-0 text-zinc-600 transition-colors group-hover:text-zinc-500" />
+      <div className="relative z-10 flex h-full flex-col justify-between gap-8">
+        <h3 className="flex items-center gap-2 text-[15px] font-medium tracking-tight text-slate-200">
+          <Icon className="size-3.5 shrink-0 text-slate-500 transition-colors group-hover:text-slate-400" />
           {title}
         </h3>
-        <p
-          className={cn(
-            "max-w-md text-sm leading-[1.75] text-zinc-500",
-            spacious ? "mt-0 text-[15px] leading-[1.8] lg:max-w-sm" : "mt-5"
-          )}
-        >
+        <p className="mt-5 max-w-md text-sm leading-[1.75] text-slate-400">
           {description}
         </p>
       </div>
@@ -293,19 +270,19 @@ export function FeatureBento() {
     <section id="features" className="scroll-mt-20">
       <div className="mx-auto max-w-5xl px-4">
         <header className="mb-16 text-center sm:mb-20">
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-zinc-600">
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-green-400">
             Features
           </p>
-          <h2 className="mt-4 text-2xl font-semibold tracking-tight text-zinc-100 sm:text-3xl">
+          <h2 className="mt-4 text-2xl font-semibold tracking-tight text-slate-50 sm:text-3xl">
             Everything pro traders need
           </h2>
-          <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-zinc-500">
+          <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-slate-400">
             From first fill to monthly review — one workspace for data,
             psychology, and risk.
           </p>
         </header>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4 lg:gap-5">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
           {features.map((feature, index) => (
             <BentoCard key={feature.title} {...feature} index={index} />
           ))}

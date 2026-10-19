@@ -1,5 +1,14 @@
-import Link from "next/link";
+import { Inter } from "next/font/google";
+
 import { Logo } from "@/components/ui/Logo";
+
+const inter = Inter({ subsets: ["latin"] });
+
+const sampleStats = [
+  { label: "Profit factor", value: "2.41" },
+  { label: "Win rate", value: "63%" },
+  { label: "Trades logged", value: "148" },
+];
 
 export default function AuthLayout({
   children,
@@ -7,189 +16,116 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen bg-zinc-950">
-      {/* ── Visual panel (hidden on mobile) ── */}
-      <div className="relative hidden lg:flex lg:w-[52%] xl:w-[55%] flex-col overflow-hidden">
-        {/* Technical grid */}
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, rgb(39 39 42 / 0.45) 1px, transparent 1px), linear-gradient(to bottom, rgb(39 39 42 / 0.45) 1px, transparent 1px)",
-            backgroundSize: "48px 48px",
-            WebkitMaskImage:
-              "radial-gradient(ellipse 80% 70% at 50% 45%, rgba(0,0,0,1) 20%, rgba(0,0,0,0.4) 55%, transparent 80%)",
-            maskImage:
-              "radial-gradient(ellipse 80% 70% at 50% 45%, rgba(0,0,0,1) 20%, rgba(0,0,0,0.4) 55%, transparent 80%)",
-          }}
-          aria-hidden
-        />
-        {/* Emerald spotlight */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(16,185,129,0.09) 0%, rgba(16,185,129,0.03) 45%, transparent 72%)",
-          }}
-          aria-hidden
-        />
+    <div
+      className={`${inter.className} grid min-h-dvh bg-[#020617] text-slate-50 lg:grid-cols-2`}
+    >
+      <aside className="relative hidden min-h-dvh overflow-hidden border-r border-slate-800/80 bg-[#050a16] lg:flex lg:flex-col">
+        <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+          <div className="hero-grid absolute inset-0 opacity-70" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_54%_48%,rgba(34,197,94,0.08),transparent_58%)]" />
+        </div>
 
-        {/* Logo top-left */}
         <div className="relative z-10 p-10">
           <Logo />
         </div>
 
-        {/* UI Fragment — Profit card + equity curve */}
-        <div className="relative z-10 flex flex-1 items-center justify-center px-12">
-          <div className="w-full max-w-sm space-y-3">
-            {/* Profit factor card */}
-            <div className="rounded-2xl border border-white/8 bg-zinc-900/60 p-5 shadow-2xl shadow-black/40 backdrop-blur-xl ring-1 ring-white/5 border-t border-white/10">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-[11px] font-medium uppercase tracking-widest text-zinc-500">
-                    Profit Factor
-                  </p>
-                  <p className="mt-1 font-mono text-4xl font-bold text-emerald-400">
-                    2.41
-                  </p>
-                  <p className="mt-1 text-xs text-zinc-500">
-                    +18% vs last month
-                  </p>
-                </div>
-                <div className="rounded-xl bg-emerald-500/10 p-2.5">
-                  <svg
-                    className="size-5 text-emerald-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={1.8}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941"
-                    />
-                  </svg>
-                </div>
-              </div>
-              {/* Mini equity curve */}
-              <div className="mt-4">
-                <svg
-                  viewBox="0 0 280 60"
-                  preserveAspectRatio="none"
-                  className="h-12 w-full"
-                  aria-hidden
-                >
-                  <defs>
-                    <linearGradient
-                      id="auth-grad"
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                    >
-                      <stop
-                        offset="0%"
-                        stopColor="#10b981"
-                        stopOpacity="0.3"
-                      />
-                      <stop
-                        offset="100%"
-                        stopColor="#10b981"
-                        stopOpacity="0"
-                      />
-                    </linearGradient>
-                  </defs>
-                  <path
-                    d="M0 52 C20 50,35 42,55 36 C75 30,90 18,115 14 C140 10,160 22,185 18 C208 14,230 6,280 4 L280 60 L0 60 Z"
-                    fill="url(#auth-grad)"
-                  />
-                  <path
-                    d="M0 52 C20 50,35 42,55 36 C75 30,90 18,115 14 C140 10,160 22,185 18 C208 14,230 6,280 4"
-                    fill="none"
-                    stroke="#10b981"
-                    strokeWidth="1.5"
-                  />
-                </svg>
-              </div>
+        <div className="relative z-10 mx-auto flex w-full max-w-xl flex-1 flex-col justify-center px-8 pb-12 xl:px-12">
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-green-400">
+            Your process, in focus
+          </p>
+          <h1 className="mt-5 max-w-lg text-balance text-4xl font-semibold leading-tight tracking-[-0.04em] text-slate-50 xl:text-5xl">
+            A clearer read on every trade.
+          </h1>
+          <p className="mt-5 max-w-lg text-base leading-7 text-slate-300">
+            Keep your decisions, risk, and results in one place. Build a
+            journal you can learn from.
+          </p>
+
+          <div className="mt-10 overflow-hidden rounded-xl border border-slate-700/60 bg-[#0e1223]/90 p-5 ring-1 ring-white/5 backdrop-blur-sm">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm font-medium text-slate-200">
+                Performance snapshot
+              </p>
+              <span className="rounded-full border border-green-500/25 bg-green-500/10 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-green-300">
+                Sample data
+              </span>
             </div>
 
-            {/* Stat row */}
-            <div className="grid grid-cols-3 gap-3">
-              {[
-                { label: "Win Rate", value: "63%" },
-                { label: "Avg RR", value: "2.1×" },
-                { label: "Trades", value: "148" },
-              ].map((s) => (
+            <div className="mt-5 grid grid-cols-3 gap-3">
+              {sampleStats.map((stat) => (
                 <div
-                  key={s.label}
-                  className="rounded-xl border border-white/6 bg-zinc-900/50 px-3 py-2.5 text-center backdrop-blur-sm"
+                  key={stat.label}
+                  className="min-w-0 rounded-lg border border-slate-700/50 bg-slate-950/70 px-3 py-3"
                 >
-                  <p className="font-mono text-sm font-semibold text-zinc-100">
-                    {s.value}
+                  <p className="truncate font-mono text-lg font-semibold tabular-nums text-slate-100">
+                    {stat.value}
                   </p>
-                  <p className="mt-0.5 text-[10px] text-zinc-500">{s.label}</p>
+                  <p className="mt-1 text-[10px] leading-4 text-slate-400">
+                    {stat.label}
+                  </p>
                 </div>
               ))}
             </div>
 
-            {/* Trade log fragment */}
-            <div className="rounded-2xl border border-white/6 bg-zinc-900/40 px-4 py-3 backdrop-blur-sm space-y-2">
-              {[
-                { sym: "NQ", pnl: "+$420", side: "LONG", win: true },
-                { sym: "ES", pnl: "-$115", side: "SHORT", win: false },
-                { sym: "CL", pnl: "+$230", side: "LONG", win: true },
-              ].map((t) => (
-                <div
-                  key={t.sym}
-                  className="flex items-center justify-between text-[11px]"
-                >
-                  <span className="font-mono font-medium text-zinc-300">
-                    {t.sym}
-                  </span>
-                  <span className="rounded px-1.5 py-0.5 bg-zinc-800/80 text-zinc-500">
-                    {t.side}
-                  </span>
-                  <span
-                    className={
-                      t.win
-                        ? "font-mono font-semibold text-emerald-400"
-                        : "font-mono font-semibold text-rose-400"
-                    }
+            <div className="mt-5 border-t border-slate-800 pt-4">
+              <div className="flex items-center justify-between text-xs">
+                <p className="font-medium text-slate-300">Equity curve</p>
+                <p className="text-slate-400">Illustrative account</p>
+              </div>
+              <svg
+                viewBox="0 0 420 96"
+                preserveAspectRatio="none"
+                className="mt-3 h-24 w-full"
+                role="img"
+                aria-label="Illustrative upward-trending equity curve"
+              >
+                <defs>
+                  <linearGradient
+                    id="auth-equity-fill"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
                   >
-                    {t.pnl}
-                  </span>
-                </div>
-              ))}
+                    <stop offset="0%" stopColor="#22c55e" stopOpacity="0.2" />
+                    <stop offset="100%" stopColor="#22c55e" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+                <path
+                  d="M0 78 C34 74 45 58 78 62 S122 48 150 50 S194 33 224 40 S276 25 302 29 S360 13 420 8 L420 96 L0 96 Z"
+                  fill="url(#auth-equity-fill)"
+                />
+                <path
+                  d="M0 78 C34 74 45 58 78 62 S122 48 150 50 S194 33 224 40 S276 25 302 29 S360 13 420 8"
+                  fill="none"
+                  stroke="#22c55e"
+                  strokeWidth="2"
+                />
+              </svg>
             </div>
           </div>
+
+          <p className="mt-5 text-xs text-slate-400">
+            Illustrative data only — your journal starts with your trades.
+          </p>
         </div>
 
-        {/* Bottom tagline */}
-        <p className="relative z-10 p-10 text-xs text-zinc-600">
-          Your performance lab.
+        <p className="relative z-10 p-10 text-xs text-slate-400">
+          A trading journal for a more deliberate process.
         </p>
-      </div>
+      </aside>
 
-      {/* ── Form panel ── */}
-      <div className="relative flex flex-1 flex-col items-center justify-center px-6 py-12 lg:border-l lg:border-zinc-800/60">
-        {/* Faint emerald radial behind the form */}
+      <main className="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden px-4 py-10 sm:px-8">
         <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(ellipse 55% 40% at 50% 50%, rgba(16,185,129,0.05) 0%, transparent 70%)",
-          }}
-          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_42%,rgba(34,197,94,0.055),transparent_58%)]"
+          aria-hidden="true"
         />
 
-        {/* Mobile-only logo */}
-        <div className="lg:hidden mb-8">
+        <div className="relative z-10 mb-8 lg:hidden">
           <Logo />
         </div>
-
-        <div className="relative z-10 w-full max-w-sm">{children}</div>
-      </div>
+        <div className="relative z-10 w-full max-w-md">{children}</div>
+      </main>
     </div>
   );
 }
