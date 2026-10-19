@@ -53,13 +53,13 @@ export function AdvancedStatsRibbon({
   return (
     <div className="space-y-4">
       <p className={sectionLabel}>Advanced metrics</p>
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-6">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 2xl:grid-cols-6">
         {items.map((item) => (
-          <Card key={item.label} className={cn(terminalCardCompact, "p-4")}>
+          <Card key={item.label} className={cn(terminalCardCompact, "min-w-0 p-4")}>
             <p className={sectionLabel}>{item.label}</p>
             <p
               className={cn(
-                "text-base font-semibold tracking-tight font-mono tabular-nums text-zinc-300",
+                "text-sm font-semibold tracking-tight font-mono tabular-nums text-zinc-300 sm:text-base",
                 item.className
               )}
             >

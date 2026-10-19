@@ -8,6 +8,6 @@ export const terminalCardCompact =
 export const pageMain = "min-h-screen space-y-8";
 
 export const metricLabel =
-  "text-xs font-medium uppercase tracking-wider text-zinc-500";
+  "text-xs font-medium uppercase tracking-wider text-zinc-400";
 
 export const sectionLabel = `mb-2 block ${metricLabel}`;
