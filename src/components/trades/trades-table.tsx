@@ -58,7 +58,7 @@ export function TradesTable({
             <TableRow
               key={trade.id}
               className={cn(
-                "group cursor-pointer border-zinc-800 transition-all hover:bg-zinc-900/80 hover:shadow-[inset_2px_0_0_0_rgb(16_185_129)]",
+                "group cursor-pointer border-zinc-800 transition-[background-color,box-shadow] hover:bg-zinc-900/80 hover:shadow-[inset_2px_0_0_0_rgb(16_185_129)]",
                 index % 2 === 1 && "bg-zinc-900/30"
               )}
               onClick={() => onViewTrade?.(trade.id)}
@@ -67,9 +67,21 @@ export function TradesTable({
                 {format(new Date(trade.entry_at), "MMM d, yyyy")}
               </TableCell>
               <TableCell>
-                <span className="font-semibold text-zinc-100">
-                  {trade.symbol}
-                </span>
+                {onViewTrade ? (
+                  <button
+                    type="button"
+                    aria-label={`Open ${trade.symbol} trade details`}
+                    className="font-semibold text-zinc-100 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      onViewTrade(trade.id);
+                    }}
+                  >
+                    {trade.symbol}
+                  </button>
+                ) : (
+                  <span className="font-semibold text-zinc-100">{trade.symbol}</span>
+                )}
               </TableCell>
               <TableCell>
                 <Badge

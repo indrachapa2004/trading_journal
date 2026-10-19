@@ -17,7 +17,7 @@ export default async function TradesPage() {
   ]);
 
   return (
-    <main className={pageMain}>
+    <div className={pageMain}>
       <PageHeader
         title="Journal"
         description="All logged trades with side, risk/reward, and P&L"
@@ -51,6 +51,6 @@ export default async function TradesPage() {
           )}
         </div>
       </Card>
-    </main>
+    </div>
   );
 }

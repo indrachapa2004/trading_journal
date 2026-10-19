@@ -47,6 +47,7 @@ function FilterChip<T extends string>({
     <button
       type="button"
       onClick={onClick}
+      aria-pressed={selected}
       className={cn(
         "rounded-full px-3 py-1 text-xs font-medium transition-colors",
         selected

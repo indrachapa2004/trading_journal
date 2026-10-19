@@ -47,8 +47,14 @@ export function PositionSizeCalculator({
 
         <div className="mt-6 shrink-0 space-y-3">
           <div>
-            <Label className={cn(sectionLabel, "normal-case")}>Account balance</Label>
+            <Label
+              htmlFor="position-account-balance"
+              className={cn(sectionLabel, "normal-case")}
+            >
+              Account balance
+            </Label>
             <Input
+              id="position-account-balance"
               type="number"
               step="any"
               value={balance}
@@ -57,8 +63,14 @@ export function PositionSizeCalculator({
             />
           </div>
           <div>
-            <Label className={cn(sectionLabel, "normal-case")}>Risk %</Label>
+            <Label
+              htmlFor="position-risk-percent"
+              className={cn(sectionLabel, "normal-case")}
+            >
+              Risk %
+            </Label>
             <Input
+              id="position-risk-percent"
               type="number"
               step="0.1"
               value={riskPercent}
@@ -67,8 +79,14 @@ export function PositionSizeCalculator({
             />
           </div>
           <div>
-            <Label className={cn(sectionLabel, "normal-case")}>Entry price</Label>
+            <Label
+              htmlFor="position-entry-price"
+              className={cn(sectionLabel, "normal-case")}
+            >
+              Entry price
+            </Label>
             <Input
+              id="position-entry-price"
               type="number"
               step="any"
               value={entry}
@@ -77,8 +95,14 @@ export function PositionSizeCalculator({
             />
           </div>
           <div>
-            <Label className={cn(sectionLabel, "normal-case")}>Stop loss</Label>
+            <Label
+              htmlFor="position-stop-loss"
+              className={cn(sectionLabel, "normal-case")}
+            >
+              Stop loss
+            </Label>
             <Input
+              id="position-stop-loss"
               type="number"
               step="any"
               value={stopLoss}

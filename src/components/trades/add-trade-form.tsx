@@ -403,11 +403,16 @@ export function AddTradeForm({ rules }: { rules: TradingRule[] }) {
                   name="status"
                   control={form.control}
                   render={({ field }) => (
-                    <div className="flex rounded-lg border border-zinc-700 p-1">
+                    <div
+                      role="group"
+                      aria-label="Trade status"
+                      className="flex rounded-lg border border-zinc-700 p-1"
+                    >
                       <Button
                         type="button"
                         variant={field.value === "open" ? "default" : "ghost"}
                         className="flex-1"
+                        aria-pressed={field.value === "open"}
                         onClick={() => field.onChange("open")}
                       >
                         Open
@@ -416,6 +421,7 @@ export function AddTradeForm({ rules }: { rules: TradingRule[] }) {
                         type="button"
                         variant={field.value === "closed" ? "default" : "ghost"}
                         className="flex-1"
+                        aria-pressed={field.value === "closed"}
                         onClick={() => field.onChange("closed")}
                       >
                         Closed
@@ -479,11 +485,16 @@ export function AddTradeForm({ rules }: { rules: TradingRule[] }) {
                   name="direction"
                   control={form.control}
                   render={({ field }) => (
-                    <div className="flex rounded-lg border border-zinc-700 p-1">
+                    <div
+                      role="group"
+                      aria-label="Trade side"
+                      className="flex rounded-lg border border-zinc-700 p-1"
+                    >
                       <Button
                         type="button"
                         variant={field.value === "long" ? "default" : "ghost"}
                         className="flex-1"
+                        aria-pressed={field.value === "long"}
                         onClick={() => field.onChange("long")}
                       >
                         Long
@@ -492,6 +503,7 @@ export function AddTradeForm({ rules }: { rules: TradingRule[] }) {
                         type="button"
                         variant={field.value === "short" ? "default" : "ghost"}
                         className="flex-1"
+                        aria-pressed={field.value === "short"}
                         onClick={() => field.onChange("short")}
                       >
                         Short
@@ -726,6 +738,7 @@ export function AddTradeForm({ rules }: { rules: TradingRule[] }) {
                       key={m.value}
                       render={<button type="button" />}
                       variant="outline"
+                      aria-pressed={mistakes.includes(m.value)}
                       className={cn(
                         "cursor-pointer px-3",
                         mistakes.includes(m.value)

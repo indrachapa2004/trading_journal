@@ -15,7 +15,7 @@ export default async function SettingsPage() {
   ]);
 
   return (
-    <main className={pageMain}>
+    <div className={pageMain}>
       <PageHeader
         title="Settings"
         description="Profile, risk limits, accounts, and trading rules"
@@ -24,6 +24,6 @@ export default async function SettingsPage() {
       <div className="mx-auto max-w-4xl">
         <SettingsForm profile={profile} accounts={accounts} rules={rules} />
       </div>
-    </main>
+    </div>
   );
 }

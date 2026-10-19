@@ -77,9 +77,10 @@ export function PnlCalendar({
               type="button"
               variant="ghost"
               size="icon-sm"
+              aria-label="Previous month"
               onClick={() => setMonth((m) => subMonths(m, 1))}
             >
-              <ChevronLeft className="size-4" />
+              <ChevronLeft className="size-4" aria-hidden="true" />
             </Button>
             <span className="min-w-[120px] text-center text-sm font-medium text-zinc-300">
               {format(month, "MMMM yyyy")}
@@ -88,9 +89,10 @@ export function PnlCalendar({
               type="button"
               variant="ghost"
               size="icon-sm"
+              aria-label="Next month"
               onClick={() => setMonth((m) => addMonths(m, 1))}
             >
-              <ChevronRight className="size-4" />
+              <ChevronRight className="size-4" aria-hidden="true" />
             </Button>
           </div>
         </div>
@@ -120,6 +122,12 @@ export function PnlCalendar({
                 key={key}
                 type="button"
                 disabled={!inMonth}
+                aria-pressed={selectedDate === key}
+                aria-label={`${format(day, "MMMM d")}: ${
+                  hasTrades
+                    ? `${formatSignedCurrency(pnl, currency)} P&L`
+                    : "No trades"
+                }`}
                 onClick={() => hasTrades && setSelectedDate(key)}
                 className={cn(
                   "flex aspect-square flex-col items-center justify-center rounded-md border text-xs transition-colors",

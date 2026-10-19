@@ -47,7 +47,7 @@ export default async function DashboardPage() {
   const monthStats = computeTradeStats(monthTrades);
 
   return (
-    <main className={pageMain}>
+    <div className={pageMain}>
         <PageHeader
           title="Dashboard"
           description={`${account?.name ?? "Portfolio"} · Terminal overview`}
@@ -122,6 +122,6 @@ export default async function DashboardPage() {
             )}
           </div>
         </Card>
-    </main>
+    </div>
   );
 }
