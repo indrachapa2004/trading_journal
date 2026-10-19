@@ -6,35 +6,32 @@ import { cn } from "@/lib/utils";
 
 export function LandingCta() {
   return (
-    <section className="mx-auto max-w-6xl px-4 py-20">
-      <div className="relative overflow-hidden rounded-xl border border-slate-700/60 bg-[#0e1223] p-8 text-center ring-1 ring-white/5 sm:p-14">
-        <div
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(34,197,94,0.08),transparent_60%)]"
-          aria-hidden="true"
-        />
-        <div className="relative">
-          <h2 className="text-3xl font-semibold tracking-tight text-slate-50 sm:text-4xl">
-            Ready to trade with clarity?
+    <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
+      <div className="flex flex-col gap-8 border-y border-white/10 py-8 sm:flex-row sm:items-center sm:justify-between sm:py-10">
+        <div className="max-w-2xl">
+          <p className="text-xs font-medium uppercase tracking-[0.18em] text-emerald-300">
+            Make the next review count
+          </p>
+          <h2 className="mt-3 text-2xl font-medium tracking-tight text-zinc-50 sm:text-3xl">
+            A better process starts with an honest record.
           </h2>
-          <p className="mx-auto mt-3 max-w-lg text-slate-300">
-            Your edge starts with honest journaling — track every trade, review
-            what worked, and improve with data.
+          <p className="mt-3 max-w-xl text-sm leading-6 text-zinc-400">
+            Start with the details you already know. Let the patterns emerge
+            over time.
           </p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link
-              href="/signup"
-              className={cn(
-                buttonVariants({ size: "lg" }),
-                "h-11 gap-2 bg-green-500 px-8 text-base text-slate-950 hover:bg-green-400"
-              )}
-            >
-              Get started now
-              <ArrowRight className="size-4" />
-            </Link>
-          </div>
-          <p className="mt-4 text-sm text-slate-400">
-            No credit card required · Free to start
-          </p>
+        </div>
+        <div className="shrink-0">
+          <Link
+            href="/signup"
+            className={cn(
+              buttonVariants({ size: "lg" }),
+              "h-11 gap-2 bg-emerald-300 px-5 text-[#102016] hover:bg-emerald-200"
+            )}
+          >
+            Create your account
+            <ArrowRight className="size-4" aria-hidden="true" />
+          </Link>
+          <p className="mt-2 text-xs text-zinc-500">Free to start</p>
         </div>
       </div>
     </section>

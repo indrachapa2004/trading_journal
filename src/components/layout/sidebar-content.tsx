@@ -22,8 +22,8 @@ export function SidebarContent({
   className,
 }: SidebarContentProps) {
   return (
-    <div className={cn("flex h-full min-h-0 flex-col bg-zinc-950", className)}>
-      <div className="flex h-14 shrink-0 items-center border-b border-zinc-800 px-2">
+    <div className={cn("flex h-full min-h-0 flex-col bg-[#121813]", className)}>
+      <div className="flex h-16 shrink-0 items-center border-b border-white/10 px-3">
         <Logo className="-ml-1" />
       </div>
 

@@ -1,4 +1,3 @@
-import { CalendarDays } from "lucide-react";
 import { PnlCalendar } from "@/components/calendar/pnl-calendar";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/layout/page-header";

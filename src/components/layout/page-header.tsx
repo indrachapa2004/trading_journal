@@ -16,16 +16,16 @@ export function PageHeader({
   return (
     <div
       className={cn(
-        "flex flex-col gap-4 border-b border-zinc-800 pb-8 sm:flex-row sm:items-end sm:justify-between",
+        "flex flex-col gap-4 border-b border-white/10 pb-6 sm:flex-row sm:items-end sm:justify-between",
         className
       )}
     >
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-zinc-100">
+        <h1 className="text-3xl font-medium tracking-tight text-zinc-100">
           {title}
         </h1>
         {description ? (
-          <p className="mt-1.5 text-sm text-zinc-500">{description}</p>
+          <p className="mt-2 text-sm leading-6 text-zinc-400">{description}</p>
         ) : null}
       </div>
       {children ? (

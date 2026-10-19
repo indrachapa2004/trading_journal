@@ -1,4 +1,3 @@
-import { Card } from "@/components/ui/card";
 import {
   formatCurrency,
   formatPercent,
@@ -6,7 +5,7 @@ import {
   formatRiskReward,
   type TradeStats,
 } from "@/lib/trades";
-import { sectionLabel, terminalCard } from "@/lib/ui-classes";
+import { sectionLabel } from "@/lib/ui-classes";
 import { cn } from "@/lib/utils";
 
 const secondaryMetrics: {
@@ -41,20 +40,18 @@ export function SummaryRibbon({ stats }: { stats: TradeStats }) {
         : "text-zinc-100";
 
   return (
-    <div className="grid gap-3 sm:grid-cols-2 2xl:grid-cols-4">
-      <Card className="border-emerald-500/20 bg-emerald-500/5 ring-1 ring-emerald-500/10">
-        <div className="min-w-0 p-5">
-          <p className={sectionLabel}>Net P&L</p>
-          <p
-            className={cn(
-              "text-2xl font-semibold tracking-tight font-mono tabular-nums sm:text-3xl 2xl:text-2xl",
-              pnlClass
-            )}
-          >
-            {pnlDisplay}
-          </p>
-        </div>
-      </Card>
+    <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-white/10 bg-white/10 sm:grid-cols-4">
+      <div className="min-w-0 bg-[#171d18] p-4 sm:p-5">
+        <dt className={sectionLabel}>Net P&L</dt>
+        <dd
+          className={cn(
+            "text-xl font-medium tracking-tight font-mono tabular-nums sm:text-2xl",
+            pnlClass
+          )}
+        >
+          {pnlDisplay}
+        </dd>
+      </div>
 
       {secondaryMetrics.map((metric) => {
         const value = stats[metric.key];
@@ -62,19 +59,14 @@ export function SummaryRibbon({ stats }: { stats: TradeStats }) {
           typeof value === "number" ? metric.format(value) : String(value);
 
         return (
-          <Card
-            key={metric.key}
-            className={cn(terminalCard, "min-w-0")}
-          >
-            <div className="min-w-0 p-5">
-              <p className={sectionLabel}>{metric.label}</p>
-              <p className="text-xl font-semibold tracking-tight font-mono tabular-nums text-zinc-100 sm:text-2xl">
-                {display}
-              </p>
-            </div>
-          </Card>
+          <div key={metric.key} className="min-w-0 bg-[#171d18] p-4 sm:p-5">
+            <dt className={sectionLabel}>{metric.label}</dt>
+            <dd className="text-lg font-medium tracking-tight font-mono tabular-nums text-zinc-100 sm:text-xl">
+              {display}
+            </dd>
+          </div>
         );
       })}
-    </div>
+    </dl>
   );
 }

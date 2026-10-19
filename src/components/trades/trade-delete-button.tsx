@@ -36,7 +36,13 @@ export function TradeDeleteButton({
 
   // Use lifted state if provided, otherwise use internal state
   const isHidden = hidden !== undefined ? hidden : internalHidden;
-  const setHidden = hidden !== undefined ? (onHide ?? (() => {})) : setInternalHidden;
+  const setHidden =
+    hidden !== undefined
+      ? (nextHidden: boolean) => {
+          if (nextHidden) onHide?.();
+          else onUnhide?.();
+        }
+      : setInternalHidden;
 
   const cleanup = useCallback(() => {
     if (timeoutRef.current) {

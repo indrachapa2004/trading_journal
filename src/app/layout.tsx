@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono, Geist } from "next/font/google";
+import { JetBrains_Mono, Geist } from "next/font/google";
 
 import { cn } from "@/lib/utils";
 
@@ -29,7 +29,7 @@ export default function RootLayout({
     <html lang="en" className={cn("dark", "font-sans", geist.variable)}>
       <body
         className={cn(
-          "min-h-screen bg-zinc-950 font-sans text-zinc-100 antialiased",
+          "min-h-screen bg-[#101510] font-sans text-zinc-100 antialiased",
           geist.variable,
           jetbrainsMono.variable
         )}

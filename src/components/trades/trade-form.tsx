@@ -97,8 +97,6 @@ const VALIDATION_FIELDS = [
   "take_profit",
 ];
 
-type FormValues = Record<string, string>;
-
 function ErrorLabel({ message }: { message: string | undefined }) {
   if (!message) return null;
   return (

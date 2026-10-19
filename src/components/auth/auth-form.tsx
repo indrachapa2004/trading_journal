@@ -100,15 +100,15 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
     mode === "signup" ? getPasswordStrength(password) : [];
 
   return (
-    <div className="rounded-xl border border-slate-700/60 bg-[#0e1223]/95 p-6 ring-1 ring-white/5 sm:p-8">
+    <div className="rounded-lg border border-white/10 bg-[#171d18] p-6 sm:p-8">
       <div className="mb-7">
-        <p className="text-xs font-medium uppercase tracking-[0.18em] text-green-400">
+        <p className="text-xs font-medium uppercase tracking-[0.18em] text-emerald-300">
           Secure access
         </p>
-        <h1 className="mt-3 text-2xl font-semibold tracking-tight text-slate-50">
+        <h1 className="mt-3 text-2xl font-medium tracking-tight text-zinc-50">
           {mode === "login" ? "Welcome back." : "Create your account."}
         </h1>
-        <p className="mt-2 text-sm leading-6 text-slate-300">
+        <p className="mt-2 text-sm leading-6 text-zinc-300">
           {mode === "login"
             ? "Sign in to review your trades and performance."
             : "Start logging trades and discovering your edge."}
@@ -121,7 +121,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
             <div className="space-y-1.5">
               <Label
                 htmlFor="first_name"
-                className="text-xs font-medium text-slate-300"
+                className="text-xs font-medium text-zinc-300"
               >
                 First name
               </Label>
@@ -132,15 +132,15 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 className={cn(
-                  "h-11 border-slate-700 bg-slate-950/70 text-slate-100 placeholder:text-slate-400",
-                  "focus-visible:border-green-500/70 focus-visible:ring-green-500/30"
+                  "h-11 border-white/15 bg-[#101510] text-zinc-100 placeholder:text-zinc-500",
+                  "focus-visible:border-emerald-300/70 focus-visible:ring-emerald-300/30"
                 )}
               />
             </div>
             <div className="space-y-1.5">
               <Label
                 htmlFor="last_name"
-                className="text-xs font-medium text-slate-300"
+                className="text-xs font-medium text-zinc-300"
               >
                 Last name
               </Label>
@@ -151,8 +151,8 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 className={cn(
-                  "h-11 border-slate-700 bg-slate-950/70 text-slate-100 placeholder:text-slate-400",
-                  "focus-visible:border-green-500/70 focus-visible:ring-green-500/30"
+                  "h-11 border-white/15 bg-[#101510] text-zinc-100 placeholder:text-zinc-500",
+                  "focus-visible:border-emerald-300/70 focus-visible:ring-emerald-300/30"
                 )}
               />
             </div>
@@ -161,12 +161,12 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
 
         {/* Email */}
         <div className="space-y-1.5">
-          <Label htmlFor="email" className="text-xs font-medium text-slate-300">
+          <Label htmlFor="email" className="text-xs font-medium text-zinc-300">
             Email
           </Label>
           <div className="relative">
             <Mail
-              className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400"
+              className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-zinc-500"
               aria-hidden="true"
             />
             <Input
@@ -178,8 +178,8 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className={cn(
-                "h-11 border-slate-700 bg-slate-950/70 pl-10 text-slate-100 placeholder:text-slate-400",
-                "focus-visible:border-green-500/70 focus-visible:ring-green-500/30"
+                "h-11 border-white/15 bg-[#101510] pl-10 text-zinc-100 placeholder:text-zinc-500",
+                "focus-visible:border-emerald-300/70 focus-visible:ring-emerald-300/30"
               )}
             />
           </div>
@@ -190,14 +190,14 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
           <div className="flex items-center justify-between">
             <Label
               htmlFor="password"
-              className="text-xs font-medium text-slate-300"
+              className="text-xs font-medium text-zinc-300"
             >
               Password
             </Label>
           </div>
           <div className="relative">
             <Lock
-              className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400"
+              className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-zinc-500"
               aria-hidden="true"
             />
             <Input
@@ -211,14 +211,14 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className={cn(
-                "h-11 border-slate-700 bg-slate-950/70 pl-10 pr-12 text-slate-100 placeholder:text-slate-400",
-                "focus-visible:border-green-500/70 focus-visible:ring-green-500/30"
+                "h-11 border-white/15 bg-[#101510] pl-10 pr-12 text-zinc-100 placeholder:text-zinc-500",
+                "focus-visible:border-emerald-300/70 focus-visible:ring-emerald-300/30"
               )}
             />
             <button
               type="button"
               onClick={() => setShowPassword((v) => !v)}
-              className="absolute right-1 top-1/2 flex size-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-slate-400 transition-colors hover:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-400"
+              className="absolute right-1 top-1/2 flex size-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-zinc-400 transition-colors hover:text-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? (
@@ -235,7 +235,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
                   key={rule.id}
                   className={cn(
                     "text-[11px]",
-                    rule.met ? "text-green-400" : "text-slate-400"
+                    rule.met ? "text-emerald-300" : "text-zinc-400"
                   )}
                 >
                   {rule.met ? "✓" : "○"} {rule.label}
@@ -248,7 +248,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
         {success && (
           <p
             role="status"
-            className="rounded-lg border border-green-500/25 bg-green-500/10 px-3 py-2 text-sm text-green-300"
+            className="rounded-md border border-emerald-300/25 bg-emerald-300/10 px-3 py-2 text-sm text-emerald-200"
           >
             {success}
           </p>
@@ -266,7 +266,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
         {/* Primary CTA */}
         <Button
           type="submit"
-          className="h-11 w-full bg-green-500 font-medium text-slate-950 hover:bg-green-400"
+          className="h-11 w-full bg-emerald-300 font-medium text-[#102016] hover:bg-emerald-200"
           disabled={loading}
         >
           {loading
@@ -279,9 +279,9 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
 
       {/* Divider */}
       <div className="my-5 flex items-center gap-3">
-        <div className="h-px flex-1 bg-slate-700" />
-        <span className="text-xs text-slate-400">or</span>
-        <div className="h-px flex-1 bg-slate-700" />
+        <div className="h-px flex-1 bg-white/10" />
+        <span className="text-xs text-zinc-500">or</span>
+        <div className="h-px flex-1 bg-white/10" />
       </div>
 
       {/* Google OAuth */}
@@ -290,9 +290,9 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
         onClick={handleGoogleSignIn}
         disabled={googleLoading}
         className={cn(
-          "flex h-11 w-full cursor-pointer items-center justify-center gap-2.5 rounded-lg border border-slate-700 bg-slate-950/60 px-4 text-sm text-slate-200 transition-colors",
-          "hover:border-slate-600 hover:bg-slate-900 hover:text-slate-50",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0e1223]",
+          "flex h-11 w-full cursor-pointer items-center justify-center gap-2.5 rounded-md border border-white/15 bg-[#101510] px-4 text-sm text-zinc-200 transition-colors",
+          "hover:border-white/25 hover:bg-white/[0.04] hover:text-zinc-50",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 focus-visible:ring-offset-2 focus-visible:ring-offset-[#171d18]",
           "disabled:cursor-not-allowed disabled:opacity-50"
         )}
       >
@@ -301,13 +301,13 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
       </button>
 
       {/* Footer link */}
-      <p className="mt-6 text-center text-sm text-slate-400">
+      <p className="mt-6 text-center text-sm text-zinc-400">
         {mode === "login" ? (
           <>
             No account?{" "}
             <Link
               href="/signup"
-              className="font-medium text-green-300 transition-colors hover:text-green-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-400"
+              className="font-medium text-emerald-200 transition-colors hover:text-emerald-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
             >
               Sign up for free
             </Link>
@@ -317,7 +317,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
             Already have an account?{" "}
             <Link
               href="/login"
-              className="font-medium text-green-300 transition-colors hover:text-green-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-400"
+              className="font-medium text-emerald-200 transition-colors hover:text-emerald-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
             >
               Sign in
             </Link>

@@ -1,7 +1,7 @@
 'use client';
 
-import { Bug, Loader2, MessageSquare, X } from "lucide-react";
-import { useState } from "react";
+import { Bug, Lightbulb, Loader2, MessageSquare, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 type FeedbackType = 'Bug Report' | 'Feature Request';
 
@@ -16,6 +16,50 @@ export function DevelopmentNotice({ userEmail }: DevelopmentNoticeProps) {
   const [userEmailInput, setUserEmailInput] = useState(userEmail || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const wasOpen = useRef(false);
+
+  useEffect(() => {
+    if (!isOpen) {
+      if (wasOpen.current) {
+        wasOpen.current = false;
+        triggerRef.current?.focus();
+      }
+      return;
+    }
+
+    wasOpen.current = true;
+    closeRef.current?.focus();
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setIsOpen(false);
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+
+      const focusable = dialogRef.current?.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), a[href], input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      if (!focusable?.length) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,8 +79,6 @@ export function DevelopmentNotice({ userEmail }: DevelopmentNoticeProps) {
           pageUrl: window.location.href,
         }),
       });
-
-      const data = await response.json();
 
       if (response.ok) {
         setSubmitStatus('success');
@@ -58,42 +100,51 @@ export function DevelopmentNotice({ userEmail }: DevelopmentNoticeProps) {
 
   return (
     <>
-      <div className="shrink-0 bg-gradient-to-r from-amber-950/50 to-orange-950/50 border-b border-amber-500/30 px-4 py-3">
-        <div className="mx-auto max-w-7xl flex items-center justify-between gap-4">
+      <div className="shrink-0 border-b border-white/10 bg-[#141a15] px-4 py-2">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
-              <Bug className="h-4 w-4 text-amber-400" />
-              <span className="text-sm font-medium text-amber-200">
-                Still in Development
+              <Bug className="size-3.5 text-emerald-300" aria-hidden="true" />
+              <span className="text-xs font-medium text-zinc-200">
+                In active development
               </span>
             </div>
-            <span className="text-xs text-amber-300/70 hidden sm:inline">
-              — We're constantly improving. Your feedback helps us build a better experience.
+            <span className="hidden text-xs text-zinc-500 sm:inline">
+              Feedback helps shape what comes next.
             </span>
           </div>
           
           <button
             onClick={() => setIsOpen(true)}
-            className="shrink-0 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium bg-amber-500/10 border border-amber-500/30 text-amber-300 hover:bg-amber-500/20 hover:border-amber-500/50 transition-all"
+            ref={triggerRef}
+            className="inline-flex min-h-8 shrink-0 items-center gap-2 rounded-md border border-white/10 px-3 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:border-white/20 hover:bg-white/[0.04] hover:text-zinc-100"
           >
-            <MessageSquare className="h-3.5 w-3.5" />
-            <span>Report Bug / Feedback</span>
+            <MessageSquare className="size-3.5" aria-hidden="true" />
+            <span>Share feedback</span>
           </button>
         </div>
       </div>
 
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="relative w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="feedback-dialog-title"
+            ref={dialogRef}
+            className="relative w-full max-w-md rounded-lg border border-white/10 bg-[#171d18] shadow-2xl"
+          >
             <button
               onClick={() => setIsOpen(false)}
+              ref={closeRef}
               className="absolute top-4 right-4 text-zinc-400 hover:text-zinc-200 transition-colors"
+              aria-label="Close feedback dialog"
             >
               <X className="h-5 w-5" />
             </button>
 
             <div className="p-6">
-              <h2 className="text-xl font-semibold text-zinc-100 mb-2">
+              <h2 id="feedback-dialog-title" className="text-xl font-semibold text-zinc-100 mb-2">
                 Send Feedback
               </h2>
               <p className="text-sm text-zinc-400 mb-6">
@@ -114,24 +165,28 @@ export function DevelopmentNotice({ userEmail }: DevelopmentNoticeProps) {
                       <button
                         type="button"
                         onClick={() => setType('Bug Report')}
+                        aria-pressed={type === 'Bug Report'}
                         className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
                           type === 'Bug Report'
-                            ? 'bg-red-500/20 border-2 border-red-500/50 text-red-300'
-                            : 'bg-zinc-800 border-2 border-zinc-700 text-zinc-400 hover:border-zinc-600'
+                            ? 'bg-rose-500/10 border border-rose-400/40 text-rose-200'
+                              : 'bg-zinc-800 border border-zinc-700 text-zinc-400 hover:border-zinc-600'
                         }`}
                       >
-                        🐛 Bug Report
+                        <Bug className="mr-2 inline size-4" aria-hidden="true" />
+                        Bug report
                       </button>
                       <button
                         type="button"
                         onClick={() => setType('Feature Request')}
+                        aria-pressed={type === 'Feature Request'}
                         className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
                           type === 'Feature Request'
-                            ? 'bg-amber-500/20 border-2 border-amber-500/50 text-amber-300'
-                            : 'bg-zinc-800 border-2 border-zinc-700 text-zinc-400 hover:border-zinc-600'
+                            ? 'bg-emerald-400/10 border border-emerald-300/40 text-emerald-200'
+                              : 'bg-zinc-800 border border-zinc-700 text-zinc-400 hover:border-zinc-600'
                         }`}
                       >
-                        💡 Feature Request
+                        <Lightbulb className="mr-2 inline size-4" aria-hidden="true" />
+                        Feature request
                       </button>
                     </div>
                   </div>
@@ -146,7 +201,7 @@ export function DevelopmentNotice({ userEmail }: DevelopmentNoticeProps) {
                       onChange={(e) => setMessage(e.target.value)}
                       required
                       rows={4}
-                      className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 resize-none"
+                      className="w-full resize-none rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:border-emerald-300/50 focus:outline-none focus:ring-2 focus:ring-emerald-300/30"
                       placeholder="Describe the bug or your feedback..."
                     />
                   </div>

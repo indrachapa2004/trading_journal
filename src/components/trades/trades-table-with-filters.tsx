@@ -4,7 +4,6 @@ import { useMemo, useState } from "react";
 import { Filter } from "lucide-react";
 
 import { TradesTableWithSheet } from "@/components/trades/trades-table-with-sheet";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { Trade } from "@/types/database";
 
@@ -34,7 +33,7 @@ const DATE_OPTIONS: { value: DateFilter; label: string }[] = [
   { value: "quarter", label: "This quarter" },
 ];
 
-function FilterChip<T extends string>({
+function FilterChip({
   label,
   selected,
   onClick,
