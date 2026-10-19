@@ -41,13 +41,13 @@ export function SummaryRibbon({ stats }: { stats: TradeStats }) {
         : "text-zinc-100";
 
   return (
-    <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-      <Card className="border-emerald-500/20 bg-emerald-500/5 shadow-lg ring-1 ring-white/10 backdrop-blur-md">
-        <div className="p-6">
+    <div className="grid gap-3 sm:grid-cols-2 2xl:grid-cols-4">
+      <Card className="border-emerald-500/20 bg-emerald-500/5 ring-1 ring-emerald-500/10">
+        <div className="min-w-0 p-5">
           <p className={sectionLabel}>Net P&L</p>
           <p
             className={cn(
-              "text-3xl font-semibold tracking-tight font-mono tabular-nums sm:text-4xl",
+              "text-2xl font-semibold tracking-tight font-mono tabular-nums sm:text-3xl 2xl:text-2xl",
               pnlClass
             )}
           >
@@ -64,11 +64,11 @@ export function SummaryRibbon({ stats }: { stats: TradeStats }) {
         return (
           <Card
             key={metric.key}
-            className={cn(terminalCard, "shadow-lg backdrop-blur-md")}
+            className={cn(terminalCard, "min-w-0")}
           >
-            <div className="p-6">
+            <div className="min-w-0 p-5">
               <p className={sectionLabel}>{metric.label}</p>
-              <p className="text-2xl font-semibold tracking-tight font-mono tabular-nums text-zinc-100">
+              <p className="text-xl font-semibold tracking-tight font-mono tabular-nums text-zinc-100 sm:text-2xl">
                 {display}
               </p>
             </div>
