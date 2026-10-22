@@ -104,7 +104,7 @@ export default function AuthLayout({
         </p>
       </aside>
 
-      <main className="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden px-4 py-10 sm:px-8">
+      <main id="main-content" className="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden px-4 py-10 sm:px-8">
         <div className="relative z-10 mb-8 lg:hidden">
           <Logo />
         </div>

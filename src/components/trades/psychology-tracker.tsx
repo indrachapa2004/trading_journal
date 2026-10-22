@@ -130,7 +130,7 @@ export function PsychologyTracker({
                 onClick={handleSave}
                 disabled={isPending}
               >
-                {isPending ? "Saving..." : "Save"}
+                {isPending ? "Saving…" : "Save"}
               </Button>
             </div>
           </div>
@@ -274,7 +274,7 @@ export function PsychologyTracker({
             onClick={handleSave}
             disabled={isPending || !isDirty}
           >
-            {isPending ? "Saving..." : "Save psychology"}
+            {isPending ? "Saving…" : "Save psychology"}
           </Button>
         </div>
       </FieldGroup>

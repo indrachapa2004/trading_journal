@@ -409,7 +409,7 @@ export function TradeForm({ trade }: TradeFormProps) {
           <CardFooter className="p-0 pt-6">
             <Button type="submit" disabled={isPending} className="w-full sm:w-auto">
               {isPending
-                ? "Saving..."
+                ? "Saving…"
                 : isEditing
                   ? "Save changes"
                   : "Create trade"}

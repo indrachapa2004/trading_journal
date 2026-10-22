@@ -121,7 +121,7 @@ export function MonthlyGoalsCard({
           </div>
           {error ? <p className="text-sm text-rose-400">{error}</p> : null}
           <Button type="submit" size="sm" disabled={saving} className="w-full">
-            {saving ? "Saving..." : "Save targets"}
+            {saving ? "Saving…" : "Save targets"}
           </Button>
         </form>
       </div>

@@ -31,7 +31,7 @@ export default async function HomePage() {
     <div className={cn("min-h-screen bg-[#101510] text-zinc-100")}>
       <MarketingHeader />
 
-      <main className="relative z-10">
+      <main id="main-content" className="relative z-10">
         <LandingHero />
 
         <div className="border-b border-white/10 py-16 sm:py-20">

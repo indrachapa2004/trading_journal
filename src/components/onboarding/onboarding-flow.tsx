@@ -117,8 +117,8 @@ function Step1({
       </div>
 
       {/* Experience */}
-      <div className="space-y-2">
-        <Label className="text-xs text-zinc-400">Trading experience</Label>
+      <div className="space-y-2" role="group" aria-labelledby="trading-experience-label">
+        <Label id="trading-experience-label" className="text-xs text-zinc-400">Trading experience</Label>
         <div className="space-y-2">
           {EXPERIENCE_OPTIONS.map((opt) => {
             const selected = form.trading_experience === opt.value;
@@ -247,8 +247,8 @@ function Step3({
       </div>
 
       {/* Asset class multi-select */}
-      <div className="space-y-2">
-        <Label className="text-xs text-zinc-400">Markets</Label>
+      <div className="space-y-2" role="group" aria-labelledby="markets-label">
+        <Label id="markets-label" className="text-xs text-zinc-400">Markets</Label>
         <div className="flex flex-wrap gap-2">
           {ASSET_CLASSES.map((asset) => {
             const selected = form.asset_classes.includes(asset);

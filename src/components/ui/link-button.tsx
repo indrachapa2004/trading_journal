@@ -1,16 +1,12 @@
-"use client";
-
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import type { ComponentProps } from "react";
 
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { VariantProps } from "class-variance-authority";
 
-type LinkButtonProps = {
-  href: string;
-  children: React.ReactNode;
-  className?: string;
-} & VariantProps<typeof buttonVariants>;
+type LinkButtonProps = ComponentProps<typeof Link> &
+  VariantProps<typeof buttonVariants>;
 
 export function LinkButton({
   href,
@@ -18,16 +14,15 @@ export function LinkButton({
   className,
   variant,
   size,
+  ...props
 }: LinkButtonProps) {
-  const router = useRouter();
-
   return (
-    <button
-      type="button"
+    <Link
+      href={href}
       className={cn(buttonVariants({ variant, size }), className)}
-      onClick={() => router.push(href)}
+      {...props}
     >
       {children}
-    </button>
+    </Link>
   );
 }

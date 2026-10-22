@@ -81,6 +81,7 @@ export function TradeRowActions({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
+        aria-label="Trade actions"
         className={cn(
           buttonVariants({ variant: "ghost", size: "icon-sm" }),
           "text-muted-foreground"

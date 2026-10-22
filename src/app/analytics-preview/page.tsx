@@ -13,7 +13,7 @@ export default function AnalyticsPreviewPage() {
   }
 
   return (
-    <main className="min-h-screen space-y-8 bg-zinc-950 p-6 text-zinc-100 sm:p-8">
+    <main id="main-content" className="min-h-screen space-y-8 bg-zinc-950 p-6 text-zinc-100 sm:p-8">
       <div className="mx-auto max-w-7xl space-y-8">
         <PageHeader
           title="Analytics preview"
