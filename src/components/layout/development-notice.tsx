@@ -202,7 +202,7 @@ export function DevelopmentNotice({ userEmail }: DevelopmentNoticeProps) {
                       required
                       rows={4}
                       className="w-full resize-none rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:border-emerald-300/50 focus:outline-none focus:ring-2 focus:ring-emerald-300/30"
-                      placeholder="Describe the bug or your feedback..."
+                      placeholder="Describe the bug or your feedback…"
                     />
                   </div>
 
@@ -239,7 +239,7 @@ export function DevelopmentNotice({ userEmail }: DevelopmentNoticeProps) {
                     {isSubmitting ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin" />
-                        <span>Sending...</span>
+                        <span>Sending…</span>
                       </>
                     ) : (
                       'Send Feedback'

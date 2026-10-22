@@ -924,7 +924,7 @@ export function AddTradeForm({ rules }: { rules: TradingRule[] }) {
           disabled={isPending || !rulesValid}
           className="w-full sm:w-auto"
         >
-          {isPending ? "Saving..." : "Create trade"}
+          {isPending ? "Saving…" : "Create trade"}
         </Button>
       </div>
     </form>

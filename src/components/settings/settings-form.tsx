@@ -94,8 +94,14 @@ function EditBalanceDialog({
             </Dialog.Description>
 
             <div className="space-y-1.5">
-              <Label className="text-zinc-400">New balance</Label>
+              <Label
+                htmlFor={`new-balance-${account.id}`}
+                className="text-zinc-400"
+              >
+                New balance
+              </Label>
               <Input
+                id={`new-balance-${account.id}`}
                 type="number"
                 step="any"
                 value={newBalance}
@@ -123,7 +129,7 @@ function EditBalanceDialog({
                     disabled={isPending}
                     className="px-6"
                   >
-                    {isPending ? "Saving..." : "Save"}
+                    {isPending ? "Saving…" : "Save"}
                   </Button>
                 }
               />
@@ -208,8 +214,12 @@ export function SettingsForm({
 
   return (
     <div className="space-y-8">
-      {message ? <p className="text-sm text-emerald-400">{message}</p> : null}
-      {error ? <p className="text-sm text-rose-400">{error}</p> : null}
+      {(message || error) && (
+        <div aria-live="polite" aria-atomic="true">
+          {message ? <p className="text-sm text-emerald-400">{message}</p> : null}
+          {error ? <p className="text-sm text-rose-400">{error}</p> : null}
+        </div>
+      )}
 
       <Card className={settingsCard}>
         <form onSubmit={handleProfile} className="contents">
@@ -225,8 +235,11 @@ export function SettingsForm({
           <CardContent className={cardContentWithFooterClass}>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label className="text-zinc-400">First name</Label>
+                <Label htmlFor="settings-first-name" className="text-zinc-400">
+                  First name
+                </Label>
                 <Input
+                  id="settings-first-name"
                   name="first_name"
                   defaultValue={profile?.first_name ?? ""}
                   placeholder="Alex"
@@ -235,8 +248,11 @@ export function SettingsForm({
                 />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-zinc-400">Last name</Label>
+                <Label htmlFor="settings-last-name" className="text-zinc-400">
+                  Last name
+                </Label>
                 <Input
+                  id="settings-last-name"
                   name="last_name"
                   defaultValue={profile?.last_name ?? ""}
                   placeholder="Rivera"
@@ -247,9 +263,15 @@ export function SettingsForm({
             </div>
 
             <div className="space-y-1.5">
-              <Label className="text-zinc-400">Base currency</Label>
+              <span id="settings-base-currency-label" className="text-zinc-400">
+                Base currency
+              </span>
               <input type="hidden" name="default_currency" value={currency} />
-              <div className="flex flex-wrap gap-2">
+              <div
+                role="group"
+                aria-labelledby="settings-base-currency-label"
+                className="flex flex-wrap gap-2"
+              >
                 {CURRENCIES.map((c) => {
                   const selected = currency === c;
                   return (
@@ -273,8 +295,14 @@ export function SettingsForm({
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label className="text-zinc-400">Daily loss limit</Label>
+                <Label
+                  htmlFor="settings-daily-loss-limit"
+                  className="text-zinc-400"
+                >
+                  Daily loss limit
+                </Label>
                 <Input
+                  id="settings-daily-loss-limit"
                   name="daily_loss_limit"
                   type="number"
                   step="any"
@@ -284,8 +312,14 @@ export function SettingsForm({
                 />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-zinc-400">Weekly loss limit</Label>
+                <Label
+                  htmlFor="settings-weekly-loss-limit"
+                  className="text-zinc-400"
+                >
+                  Weekly loss limit
+                </Label>
                 <Input
+                  id="settings-weekly-loss-limit"
                   name="weekly_loss_limit"
                   type="number"
                   step="any"
@@ -335,8 +369,14 @@ export function SettingsForm({
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label className="text-zinc-400">Account name</Label>
+                <Label
+                  htmlFor="settings-account-name"
+                  className="text-zinc-400"
+                >
+                  Account name
+                </Label>
                 <Input
+                  id="settings-account-name"
                   name="name"
                   placeholder="Main portfolio"
                   required
@@ -344,16 +384,25 @@ export function SettingsForm({
                 />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-zinc-400">Broker</Label>
+                <Label htmlFor="settings-broker" className="text-zinc-400">
+                  Broker
+                </Label>
                 <Input
+                  id="settings-broker"
                   name="broker"
                   placeholder="Optional"
                   className="border-zinc-700 bg-zinc-950"
                 />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-zinc-400">Starting balance</Label>
+                <Label
+                  htmlFor="settings-starting-balance"
+                  className="text-zinc-400"
+                >
+                  Starting balance
+                </Label>
                 <Input
+                  id="settings-starting-balance"
                   name="starting_balance"
                   type="number"
                   step="any"
@@ -363,8 +412,14 @@ export function SettingsForm({
                 />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-zinc-400">Currency</Label>
+                <Label
+                  htmlFor="settings-account-currency"
+                  className="text-zinc-400"
+                >
+                  Currency
+                </Label>
                 <Input
+                  id="settings-account-currency"
                   name="currency"
                   placeholder="USD"
                   defaultValue="USD"
@@ -420,9 +475,13 @@ export function SettingsForm({
           )}
 
           <form onSubmit={handleAddRule} className="flex items-center gap-2">
+            <Label htmlFor="settings-trading-rule" className="sr-only">
+              New trading rule
+            </Label>
             <Input
+              id="settings-trading-rule"
               name="label"
-              placeholder="New rule..."
+              placeholder="New rule…"
               required
               className="min-w-0 flex-1 border-zinc-700 bg-zinc-950"
             />

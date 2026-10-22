@@ -278,8 +278,12 @@ export function CsvImport() {
           </>
         ) : null}
 
-        {error ? <p className="text-sm text-rose-400">{error}</p> : null}
-        {success ? <p className="text-sm text-emerald-400">{success}</p> : null}
+        {(error || success) && (
+          <div aria-live="polite" aria-atomic="true">
+            {error ? <p className="text-sm text-rose-400">{error}</p> : null}
+            {success ? <p className="text-sm text-emerald-400">{success}</p> : null}
+          </div>
+        )}
       </div>
     </Card>
   );

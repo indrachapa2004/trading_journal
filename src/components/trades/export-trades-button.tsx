@@ -37,7 +37,7 @@ export function ExportTradesButton() {
       className="border-zinc-700"
     >
       <Download className="size-4" />
-      {isPending ? "Exporting..." : "Export CSV"}
+      {isPending ? "Exporting…" : "Export CSV"}
     </Button>
   );
 }
