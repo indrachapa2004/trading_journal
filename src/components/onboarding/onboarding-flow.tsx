@@ -128,7 +128,7 @@ function Step1({
                 type="button"
                 onClick={() => onChange({ trading_experience: opt.value })}
                 className={cn(
-                  "w-full rounded-xl border px-4 py-3 text-left transition-all duration-150",
+                  "w-full rounded-xl border px-4 py-3 text-left transition-colors transition-opacity duration-150 ease-in-out",
                   selected
                     ? "border-emerald-500/50 bg-emerald-500/8 ring-1 ring-emerald-500/30"
                     : "border-zinc-700/60 bg-zinc-800/30 hover:border-zinc-600 hover:bg-zinc-800/50"

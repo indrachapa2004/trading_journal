@@ -85,7 +85,7 @@ function EditBalanceDialog({
           />
           <Dialog.Portal>
             <Dialog.Backdrop className="fixed inset-0 z-50 bg-black/40 data-ending-style:opacity-0 data-starting-style:opacity-0" />
-            <Dialog.Popup className="fixed left-1/2 top-1/2 z-50 w-full max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-lg border border-zinc-800 bg-zinc-950 p-6 shadow-xl data-ending-style:opacity-0 data-starting-style:opacity-0">
+            <Dialog.Popup className="fixed left-1/2 top-1/2 z-50 w-full max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-lg border border-zinc-800 bg-zinc-950 p-6 shadow-xl max-h-[90vh] overflow-y-auto overscroll-contain data-ending-style:opacity-0 data-starting-style:opacity-0">
             <Dialog.Title className="mb-1 text-base font-semibold text-zinc-100">
               Edit balance
             </Dialog.Title>
@@ -107,7 +107,6 @@ function EditBalanceDialog({
                 value={newBalance}
                 onChange={(e) => setNewBalance(Number(e.target.value))}
                 className="border-zinc-700 bg-zinc-950 font-mono"
-                autoFocus
               />
             </div>
 
