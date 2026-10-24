@@ -46,7 +46,7 @@ export function SummaryRibbon({ stats }: { stats: TradeStats }) {
         <dd
           className={cn(
             "text-xl font-medium tracking-tight font-mono tabular-nums sm:text-2xl",
-            pnlClass
+            pnlClass,
           )}
         >
           {pnlDisplay}

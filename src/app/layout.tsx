@@ -27,6 +27,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={cn("dark", "font-sans", geist.variable)}>
+      <head>
+        <meta name="theme-color" content="#101510" />
+      </head>
       <body
         className={cn(
           "min-h-screen bg-[#101510] font-sans text-zinc-100 antialiased",
@@ -38,7 +41,7 @@ export default function RootLayout({
           href="#main-content"
           className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-2 focus:rounded-md focus:bg-zinc-900 focus:px-4 focus:py-2 focus:text-zinc-100 focus:shadow-lg"
         >
-          skip to content
+          Skip to content
         </a>
         {children}
       </body>

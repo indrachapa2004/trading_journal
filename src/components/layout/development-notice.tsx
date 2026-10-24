@@ -132,7 +132,7 @@ export function DevelopmentNotice({ userEmail }: DevelopmentNoticeProps) {
             aria-modal="true"
             aria-labelledby="feedback-dialog-title"
             ref={dialogRef}
-            className="relative w-full max-w-md rounded-lg border border-white/10 bg-[#171d18] shadow-2xl"
+            className="relative w-full max-w-md rounded-lg border border-white/10 bg-[#171d18] shadow-2xl overscroll-contain max-h-[90vh] overflow-y-auto"
           >
             <button
               onClick={() => setIsOpen(false)}
