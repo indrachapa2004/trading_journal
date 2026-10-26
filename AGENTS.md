@@ -108,3 +108,9 @@ trading_journal/
 - **Typecheck:** `npx tsc --noEmit`
 - **Lint:** `npm run lint`
 - **Production Build:** `npm run build`
+
+---
+
+## 6. Skill Orchestration Rules
+1. Use the `ponytail` skill for every prompt, choosing the appropriate level based on how safety-critical and non-trivial the work is.
+2. You may apply additional relevant skills as needed, but `ponytail` must still be used for the primary implementation/rewrite recommendation.
