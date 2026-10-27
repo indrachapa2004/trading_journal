@@ -34,17 +34,19 @@ export default async function HomePage() {
       <main id="main-content" className="relative z-10">
         <LandingHero />
 
-        <div className="border-b border-white/10 py-16 sm:py-20">
+        <div className="min-h-[calc(100svh-4rem)] border-b border-white/10 flex items-center justify-center">
           <ScrollReveal>
-            <FeatureBento />
+            <div className="w-full flex items-center justify-center">
+              <FeatureBento />
+            </div>
           </ScrollReveal>
         </div>
 
         {/* Pricing teaser */}
-        <section
-          id="pricing"
-          className="scroll-mt-20 border-b border-white/10 py-16 sm:py-20"
-        >
+          <section
+            id="pricing"
+              className="scroll-mt-20 min-h-[calc(100svh-4rem)] border-b border-white/10 flex items-center justify-center"
+         >
           <ScrollReveal>
             <div className="mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 md:grid-cols-[1fr_auto] md:items-center">
               <div>

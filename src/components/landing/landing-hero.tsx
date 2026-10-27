@@ -12,9 +12,9 @@ export function LandingHero() {
   const prefersReducedMotion = useReducedMotion();
 
   return (
-    <section className="overflow-hidden border-b border-white/10">
+    <section className="min-h-[100svh] overflow-hidden border-b border-white/10 pt-16 sm:pt-0" style={{ paddingTop: undefined }} >
       <motion.div
-        className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[0.82fr_1.18fr] lg:gap-16 lg:py-24"
+        className="mx-auto grid min-h-[calc(100svh-4rem)] max-w-7xl grid-cols-1 items-center gap-12 px-4 py-12 sm:px-6 sm:py-16 lg:grid-cols-[0.82fr_1.18fr] lg:gap-16 lg:py-20"
         initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{

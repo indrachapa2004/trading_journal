@@ -100,7 +100,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
     mode === "signup" ? getPasswordStrength(password) : [];
 
   return (
-    <div className="rounded-lg border border-white/10 bg-[#171d18] p-6 sm:p-8">
+    <div className="rounded-lg border border-white/10 bg-[#171d18] p-4 sm:p-5">
       <div className="mb-7">
         <p className="text-xs font-medium uppercase tracking-[0.18em] text-emerald-300">
           Secure access

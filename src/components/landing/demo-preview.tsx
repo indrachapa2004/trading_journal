@@ -8,10 +8,10 @@ export function DemoPreview() {
   const prefersReducedMotion = useReducedMotion();
 
   return (
-    <section
-      id="demo"
-      className="scroll-mt-20 px-4 pb-20 pt-4 sm:pb-28"
-    >
+     <section
+       id="demo"
+       className="min-h-[100svh] scroll-mt-20 px-4 py-16 sm:py-20"
+     >
       <div className="mx-auto max-w-5xl">
         <div className="mb-8 text-center">
           <p className="text-sm font-medium uppercase tracking-widest text-emerald-500/80">

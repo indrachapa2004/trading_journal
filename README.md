@@ -88,7 +88,3 @@ supabase/
 ## Deploy
 
 Deploy the Next.js app to [Vercel](https://vercel.com) and add the same Supabase environment variables. Update Supabase auth URLs to your production domain.
-
-## Local agent tools
-
-Personal agent skill folders and `skills-lock.json` are local-only and excluded from Git. The shared VS Code MCP configuration in `.vscode/mcp.json` is tracked; it prompts each developer for their own Stitch API key.

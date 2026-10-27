@@ -7,9 +7,9 @@ import { cn } from "@/lib/utils";
 
 export function LandingCta() {
   return (
-    <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
+    <section className="mx-auto min-h-[100svh] max-w-6xl px-4 sm:px-6 flex items-center justify-center">
       <ScrollReveal>
-        <div className="flex flex-col gap-8 border-y border-white/10 py-8 sm:flex-row sm:items-center sm:justify-between sm:py-10">
+        <div className="flex flex-col gap-8 border-y border-white/10 sm:flex-row sm:items-center sm:justify-between">
           <div className="max-w-2xl">
             <p className="text-xs font-medium uppercase tracking-[0.18em] text-emerald-300">
               Make the next review count

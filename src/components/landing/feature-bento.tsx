@@ -53,9 +53,9 @@ const features: {
 
 export function FeatureBento() {
   return (
-    <section id="features" className="scroll-mt-20">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <header className="mb-10 grid gap-4 sm:mb-12 sm:grid-cols-2 sm:items-end">
+    <section id="features" className="min-h-[100svh] scroll-mt-20 flex items-center">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 w-full">
+        <header className="mb-10 grid gap-4 sm:mb-12 sm:grid-cols-2 sm:items-end w-full">
           <div>
             <p className="text-xs font-medium uppercase tracking-[0.18em] text-emerald-300">
               Built for the review
